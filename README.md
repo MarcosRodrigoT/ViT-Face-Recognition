@@ -39,7 +39,7 @@ Project
 * [Labeled Faces in the Wild (LFW)](http://vis-www.cs.umass.edu/lfw/#download)
 * [UPM-GTI-Face](https://www.gti.ssr.upm.es/data/upm-gti-face-dataset)
 
-```bash
+```sh
 cd ~/Downloads/
 mv VGG-Face2/* ~/Project/datasets/VGG-Face2/
 mv lfw/* ~/Project/datasets/LFW/lfw/
