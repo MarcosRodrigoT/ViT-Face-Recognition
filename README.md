@@ -29,9 +29,6 @@ Project
 ```
 
 
-
-
-
 ## Pre-requisites
 1. Download the following datasets and move them to their respective directories:
 
@@ -50,10 +47,6 @@ mv UPM-GTI-Face/* ~/Project/datasets/UPM-GTI-Face
 ```bash
 pip install -r requirements.txt
 ```
-
-
-
-
 
 
 ## Training
@@ -87,9 +80,6 @@ vit_model.load_weights(best_weights)
 ```
 
 
-
-
-
 ## LFW Test
 The test can be performed by executing the corresponding file. Results will be saved to
 ``/saved_results/Tests/LFW``.
@@ -99,9 +89,6 @@ python lfw_test.py
 ```
 
 
-
-
-
 ## UPM-GTI-Face Test
 The test can be performed by executing the corresponding file. Results will be saved to
 ``/saved_results/Tests/UPM-GTI-Face``.
@@ -109,3 +96,19 @@ The test can be performed by executing the corresponding file. Results will be s
 ```bash
 python upm-gti-face_test.py
 ```
+
+
+## Authors
+* Marcos Rodrigo - marcos.rodrigo@upm.es
+* Carlos Cuevas - carlos.cuevas@upm.es
+* Narciso García - narciso.garcia@upm.es
+
+
+## Citation
+@inproceedings{rodrigo2023comprehensive,\
+    title={Comprehensive Comparison of Vision Transformers and Traditional Convolutional Neural Networks for Face Recognition Tasks},\
+    author={Rodrigo, Marcos and Cuevas, Carlos and Garcia, Narciso},\
+    booktitle={Under revision for the 2023 IEEE International Conference on Image Processing},\
+    year={2023},\
+    organization={IEEE}\
+}
