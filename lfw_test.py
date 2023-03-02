@@ -121,7 +121,7 @@ CREATE DATASET WITH PAIRS
 """
 
 pairs = {}
-with open('Z:/Datasets/LFW/pairs.txt', 'r') as file:
+with open('./datasets/LFW/pairs.txt', 'r') as file:
     for idx, line in enumerate(file):
         line_aux = line.split('\n')[0].split('\t')
         if len(line_aux) < 4:

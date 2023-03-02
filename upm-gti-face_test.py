@@ -474,25 +474,25 @@ GTI-FACE DATASET
 
 """ INDOOR """
 # Not Masked
-GALLERY_I_N = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Indoor/Gallery/Not Masked/'
-PROBE_I_N = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Indoor/Camera/Not Masked/Frames/Curated/'
+GALLERY_I_N = './datasets/UPM-GTI-Face/Indoor/Gallery/Not Masked/'
+PROBE_I_N = './datasets/UPM-GTI-Face/Indoor/Camera/Not Masked/Frames/Curated/'
 GALLERY_SUBJECTS_I_N = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_I_N = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos_2', 'Narciso', 'Pablo']
 # Masked
-GALLERY_I_M = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Indoor/Gallery/Masked/'
-PROBE_I_M = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Indoor/Camera/Masked/Frames/Curated/'
+GALLERY_I_M = './datasets/UPM-GTI-Face/Indoor/Gallery/Masked/'
+PROBE_I_M = './datasets/UPM-GTI-Face/Indoor/Camera/Masked/Frames/Curated/'
 GALLERY_SUBJECTS_I_M = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_I_M = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos_2', 'Narciso', 'Pablo']
 
 """ OUTDOOR """
 # Not Masked
-GALLERY_O_N = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Outdoor/Gallery/Not Masked/'
-PROBE_O_N = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Outdoor/Camera/Not Masked/Frames/Curated/'
+GALLERY_O_N = './datasets/UPM-GTI-Face/Outdoor/Gallery/Not Masked/'
+PROBE_O_N = './datasets/UPM-GTI-Face/Outdoor/Camera/Not Masked/Frames/Curated/'
 GALLERY_SUBJECTS_O_N = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_O_N = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 # Masked
-GALLERY_O_M = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Outdoor/Gallery/Masked/'
-PROBE_O_M = 'Y:/Doctorado UPM/Paper ICIP 2022/ICIP DDBB/Outdoor/Camera/Masked/Frames/Curated/'
+GALLERY_O_M = './datasets/UPM-GTI-Face/Outdoor/Gallery/Masked/'
+PROBE_O_M = './datasets/UPM-GTI-Face/Outdoor/Camera/Masked/Frames/Curated/'
 GALLERY_SUBJECTS_O_M = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_O_M = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 

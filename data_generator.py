@@ -9,8 +9,8 @@ for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-vggface2_train = './datasets/VGG-Face2/data/train'    # Total nº files: 3141890    'Z:/Datasets/VGG-Face2/data/train'
-vggface2_test = './datasets/VGG-Face2/data/test'      # Total nº files: 169396     'Z:/Datasets/VGG-Face2/data/test'
+vggface2_train = './datasets/VGG-Face2/data/train'    # Total nº files: 3141890
+vggface2_test = './datasets/VGG-Face2/data/test'      # Total nº files: 169396
 dataset_path = vggface2_train
 labels_list = [tf.constant(x) for x in sorted(os.listdir(dataset_path))]
 
