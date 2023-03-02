@@ -107,7 +107,7 @@ python upm-gti-face_test.py
 ## Citation
 @inproceedings{rodrigo2023comprehensive,\
     title={Comprehensive Comparison of Vision Transformers and Traditional Convolutional Neural Networks for Face Recognition Tasks},\
-    author={Rodrigo, Marcos and Cuevas, Carlos and Garcia, Narciso},\
+    author={Rodrigo, Marcos and Cuevas, Carlos and García, Narciso},\
     booktitle={Under revision for the 2023 IEEE International Conference on Image Processing},\
     year={2023},\
     organization={IEEE}\
