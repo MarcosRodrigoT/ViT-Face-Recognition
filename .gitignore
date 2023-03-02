@@ -18,4 +18,4 @@ saved_results/Tests/LFW/*
 saved_results/Tests/UPM-GTI-Face/*
 !saved_results/Tests/UPM-GTI-Face/AUC Curves.xlsx
 !saved_results/Tests/UPM-GTI-Face/AUC_FC.png
-!saved_results/Tests/UPM-GTI-Face/AUC_FC_zoom.png.png
+!saved_results/Tests/UPM-GTI-Face/AUC_FC_zoom.png
