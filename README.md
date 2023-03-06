@@ -13,19 +13,19 @@ https://www.gti.ssr.upm.es/data as a .zip file.
 The structure of directories should look like:
 ```
 Project
-|-> datasets
-    |-> LFW
-        |-> lfw
-    |-> UPM-GTI-Face
-    |-> VGG-Face2
-|-> saved_results
-    |-> Models
-        |-> ResNet_50
-        |-> VGG_16
-        |->  ViT_B32
-    |-> Tests
-        |-> LFW
-        |-> UPM-GTI-Face
+├── datasets
+    ├── LFW
+        ├── lfw
+    ├── UPM-GTI-Face
+    ├── VGG-Face2
+├── saved_results
+    ├── Models
+        ├── ResNet_50
+        ├── VGG_16
+        ├──  ViT_B32
+    ├── Tests
+        ├── LFW
+        ├── UPM-GTI-Face
 ```
 
 
