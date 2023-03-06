@@ -105,6 +105,7 @@ python upm-gti-face_test.py
 
 
 ## Citation
+```BibTex
 @inproceedings{rodrigo2023comprehensive,\
     title={Comprehensive Comparison of Vision Transformers and Traditional Convolutional Neural Networks for Face Recognition Tasks},\
     author={Rodrigo, Marcos and Cuevas, Carlos and García, Narciso},\
@@ -112,3 +113,4 @@ python upm-gti-face_test.py
     year={2023},\
     organization={IEEE}\
 }
+```
