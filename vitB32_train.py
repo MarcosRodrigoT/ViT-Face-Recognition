@@ -10,11 +10,14 @@ from data_generator import create_data_generators
 HYPERPARAMETERS
 """
 
+# Distribute training
+strategy = tf.distribute.MirroredStrategy()
+
 # Input
 image_size = 224
 
 # Hyper-parameters
-batch_size = 128
+batch_size = 128 * strategy.num_replicas_in_sync
 num_epochs = 25
 learning_rate = 0.0001
 num_classes = 8631
@@ -31,14 +34,15 @@ train_gen, val_gen, test_gen = create_data_generators(target_size=image_size, ba
 MODEL
 """
 
-base_model = vit.vit_b32(
-    image_size=image_size,
-    pretrained=True,
-    include_top=False,
-    pretrained_top=False,
-)
-y = tf.keras.layers.Dense(num_classes, activation='softmax')(base_model.output)
-vit_model = tf.keras.models.Model(inputs=base_model.input, outputs=y)
+with strategy.scope():
+    base_model = vit.vit_b32(
+        image_size=image_size,
+        pretrained=True,
+        include_top=False,
+        pretrained_top=False,
+    )
+    y = tf.keras.layers.Dense(num_classes, activation='softmax')(base_model.output)
+    vit_model = tf.keras.models.Model(inputs=base_model.input, outputs=y)
 vit_model.summary()
 
 
@@ -46,17 +50,18 @@ vit_model.summary()
 MODEL COMPILE
 """
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-vit_model.compile(
-    optimizer=optimizer,
-    loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-    metrics=[
-        keras.metrics.SparseCategoricalAccuracy(name="accuracy"),
-        keras.metrics.SparseTopKCategoricalAccuracy(k=5, name="top-5-accuracy"),
-        keras.metrics.SparseTopKCategoricalAccuracy(k=10, name="top-10-accuracy"),
-        keras.metrics.SparseTopKCategoricalAccuracy(k=100, name="top-100-accuracy"),
-    ]
-)
+with strategy.scope():
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    vit_model.compile(
+        optimizer=optimizer,
+        loss=keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+        metrics=[
+            keras.metrics.SparseCategoricalAccuracy(name="accuracy"),
+            keras.metrics.SparseTopKCategoricalAccuracy(k=5, name="top-5-accuracy"),
+            keras.metrics.SparseTopKCategoricalAccuracy(k=10, name="top-10-accuracy"),
+            keras.metrics.SparseTopKCategoricalAccuracy(k=100, name="top-100-accuracy"),
+        ]
+    )
 
 
 """

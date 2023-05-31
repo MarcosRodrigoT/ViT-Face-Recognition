@@ -11,11 +11,14 @@ from data_generator import create_data_generators
 HYPERPARAMETERS
 """
 
+# Distribute training
+strategy = tf.distribute.MirroredStrategy()
+
 # Input
 image_size = 224
 
 # Hyper-parameters
-batch_size = 128
+batch_size = 128 * strategy.num_replicas_in_sync
 num_epochs = 25
 learning_rate = 0.0001
 num_classes = 8631
@@ -32,15 +35,16 @@ train_gen, val_gen, test_gen = create_data_generators(target_size=image_size, ba
 MODEL
 """
 
-vgg_model = tf.keras.applications.VGG16(
-    include_top=True,
-    weights="imagenet",
-    input_shape=(image_size, image_size, 3),
-    pooling=None,
-)
-Y = vgg_model.layers[-2].output
-Y = Dense(units=num_classes, activation='softmax', kernel_initializer=GlorotUniform)(Y)
-vgg_model = Model(inputs=vgg_model.input, outputs=Y, name='VGG16')
+with strategy.scope():
+    vgg_model = tf.keras.applications.VGG16(
+        include_top=True,
+        weights="imagenet",
+        input_shape=(image_size, image_size, 3),
+        pooling=None,
+    )
+    Y = vgg_model.layers[-2].output
+    Y = Dense(units=num_classes, activation='softmax', kernel_initializer=GlorotUniform)(Y)
+    vgg_model = Model(inputs=vgg_model.input, outputs=Y, name='VGG16')
 vgg_model.summary()
 
 
@@ -48,17 +52,18 @@ vgg_model.summary()
 MODEL COMPILE
 """
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-vgg_model.compile(
-    optimizer=optimizer,
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
-    metrics=[
-        tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy'),
-        tf.keras.metrics.SparseTopKCategoricalAccuracy(k=5, name='top-5-accuracy'),
-        tf.keras.metrics.SparseTopKCategoricalAccuracy(k=10, name='top-10-accuracy'),
-        tf.keras.metrics.SparseTopKCategoricalAccuracy(k=100, name='top-100-accuracy'),
-    ]
-)
+with strategy.scope():
+    optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+    vgg_model.compile(
+        optimizer=optimizer,
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+        metrics=[
+            tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy'),
+            tf.keras.metrics.SparseTopKCategoricalAccuracy(k=5, name='top-5-accuracy'),
+            tf.keras.metrics.SparseTopKCategoricalAccuracy(k=10, name='top-10-accuracy'),
+            tf.keras.metrics.SparseTopKCategoricalAccuracy(k=100, name='top-100-accuracy'),
+        ]
+    )
 
 
 """
