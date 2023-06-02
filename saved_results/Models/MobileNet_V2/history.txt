@@ -1,0 +1,389 @@
+[INFO] Num images for train: 2827701 -> train_ds: 2827701
+[INFO] Num images for validation: 157094 -> val_ds: 157094
+[INFO] Num images for test: 157094 -> test_ds: 157095
+Model: "MobileNetV2"
+______________________________________________________________________________________________________________________________________________________
+ Layer (type)                                    Output Shape                     Param #           Connected to                                      
+======================================================================================================================================================
+ input_1 (InputLayer)                            [(None, 224, 224, 3)]            0                 []                                                
+                                                                                                                                                      
+ Conv1 (Conv2D)                                  (None, 112, 112, 32)             864               ['input_1[0][0]']                                 
+                                                                                                                                                      
+ bn_Conv1 (BatchNormalization)                   (None, 112, 112, 32)             128               ['Conv1[0][0]']                                   
+                                                                                                                                                      
+ Conv1_relu (ReLU)                               (None, 112, 112, 32)             0                 ['bn_Conv1[0][0]']                                
+                                                                                                                                                      
+ expanded_conv_depthwise (DepthwiseConv2D)       (None, 112, 112, 32)             288               ['Conv1_relu[0][0]']                              
+                                                                                                                                                      
+ expanded_conv_depthwise_BN (BatchNormalization)  (None, 112, 112, 32)            128               ['expanded_conv_depthwise[0][0]']                 
+                                                                                                                                                      
+ expanded_conv_depthwise_relu (ReLU)             (None, 112, 112, 32)             0                 ['expanded_conv_depthwise_BN[0][0]']              
+                                                                                                                                                      
+ expanded_conv_project (Conv2D)                  (None, 112, 112, 16)             512               ['expanded_conv_depthwise_relu[0][0]']            
+                                                                                                                                                      
+ expanded_conv_project_BN (BatchNormalization)   (None, 112, 112, 16)             64                ['expanded_conv_project[0][0]']                   
+                                                                                                                                                      
+ block_1_expand (Conv2D)                         (None, 112, 112, 96)             1536              ['expanded_conv_project_BN[0][0]']                
+                                                                                                                                                      
+ block_1_expand_BN (BatchNormalization)          (None, 112, 112, 96)             384               ['block_1_expand[0][0]']                          
+                                                                                                                                                      
+ block_1_expand_relu (ReLU)                      (None, 112, 112, 96)             0                 ['block_1_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_1_pad (ZeroPadding2D)                     (None, 113, 113, 96)             0                 ['block_1_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_1_depthwise (DepthwiseConv2D)             (None, 56, 56, 96)               864               ['block_1_pad[0][0]']                             
+                                                                                                                                                      
+ block_1_depthwise_BN (BatchNormalization)       (None, 56, 56, 96)               384               ['block_1_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_1_depthwise_relu (ReLU)                   (None, 56, 56, 96)               0                 ['block_1_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_1_project (Conv2D)                        (None, 56, 56, 24)               2304              ['block_1_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_1_project_BN (BatchNormalization)         (None, 56, 56, 24)               96                ['block_1_project[0][0]']                         
+                                                                                                                                                      
+ block_2_expand (Conv2D)                         (None, 56, 56, 144)              3456              ['block_1_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_2_expand_BN (BatchNormalization)          (None, 56, 56, 144)              576               ['block_2_expand[0][0]']                          
+                                                                                                                                                      
+ block_2_expand_relu (ReLU)                      (None, 56, 56, 144)              0                 ['block_2_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_2_depthwise (DepthwiseConv2D)             (None, 56, 56, 144)              1296              ['block_2_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_2_depthwise_BN (BatchNormalization)       (None, 56, 56, 144)              576               ['block_2_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_2_depthwise_relu (ReLU)                   (None, 56, 56, 144)              0                 ['block_2_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_2_project (Conv2D)                        (None, 56, 56, 24)               3456              ['block_2_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_2_project_BN (BatchNormalization)         (None, 56, 56, 24)               96                ['block_2_project[0][0]']                         
+                                                                                                                                                      
+ block_2_add (Add)                               (None, 56, 56, 24)               0                 ['block_1_project_BN[0][0]',                      
+                                                                                                     'block_2_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_3_expand (Conv2D)                         (None, 56, 56, 144)              3456              ['block_2_add[0][0]']                             
+                                                                                                                                                      
+ block_3_expand_BN (BatchNormalization)          (None, 56, 56, 144)              576               ['block_3_expand[0][0]']                          
+                                                                                                                                                      
+ block_3_expand_relu (ReLU)                      (None, 56, 56, 144)              0                 ['block_3_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_3_pad (ZeroPadding2D)                     (None, 57, 57, 144)              0                 ['block_3_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_3_depthwise (DepthwiseConv2D)             (None, 28, 28, 144)              1296              ['block_3_pad[0][0]']                             
+                                                                                                                                                      
+ block_3_depthwise_BN (BatchNormalization)       (None, 28, 28, 144)              576               ['block_3_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_3_depthwise_relu (ReLU)                   (None, 28, 28, 144)              0                 ['block_3_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_3_project (Conv2D)                        (None, 28, 28, 32)               4608              ['block_3_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_3_project_BN (BatchNormalization)         (None, 28, 28, 32)               128               ['block_3_project[0][0]']                         
+                                                                                                                                                      
+ block_4_expand (Conv2D)                         (None, 28, 28, 192)              6144              ['block_3_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_4_expand_BN (BatchNormalization)          (None, 28, 28, 192)              768               ['block_4_expand[0][0]']                          
+                                                                                                                                                      
+ block_4_expand_relu (ReLU)                      (None, 28, 28, 192)              0                 ['block_4_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_4_depthwise (DepthwiseConv2D)             (None, 28, 28, 192)              1728              ['block_4_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_4_depthwise_BN (BatchNormalization)       (None, 28, 28, 192)              768               ['block_4_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_4_depthwise_relu (ReLU)                   (None, 28, 28, 192)              0                 ['block_4_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_4_project (Conv2D)                        (None, 28, 28, 32)               6144              ['block_4_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_4_project_BN (BatchNormalization)         (None, 28, 28, 32)               128               ['block_4_project[0][0]']                         
+                                                                                                                                                      
+ block_4_add (Add)                               (None, 28, 28, 32)               0                 ['block_3_project_BN[0][0]',                      
+                                                                                                     'block_4_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_5_expand (Conv2D)                         (None, 28, 28, 192)              6144              ['block_4_add[0][0]']                             
+                                                                                                                                                      
+ block_5_expand_BN (BatchNormalization)          (None, 28, 28, 192)              768               ['block_5_expand[0][0]']                          
+                                                                                                                                                      
+ block_5_expand_relu (ReLU)                      (None, 28, 28, 192)              0                 ['block_5_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_5_depthwise (DepthwiseConv2D)             (None, 28, 28, 192)              1728              ['block_5_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_5_depthwise_BN (BatchNormalization)       (None, 28, 28, 192)              768               ['block_5_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_5_depthwise_relu (ReLU)                   (None, 28, 28, 192)              0                 ['block_5_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_5_project (Conv2D)                        (None, 28, 28, 32)               6144              ['block_5_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_5_project_BN (BatchNormalization)         (None, 28, 28, 32)               128               ['block_5_project[0][0]']                         
+                                                                                                                                                      
+ block_5_add (Add)                               (None, 28, 28, 32)               0                 ['block_4_add[0][0]',                             
+                                                                                                     'block_5_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_6_expand (Conv2D)                         (None, 28, 28, 192)              6144              ['block_5_add[0][0]']                             
+                                                                                                                                                      
+ block_6_expand_BN (BatchNormalization)          (None, 28, 28, 192)              768               ['block_6_expand[0][0]']                          
+                                                                                                                                                      
+ block_6_expand_relu (ReLU)                      (None, 28, 28, 192)              0                 ['block_6_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_6_pad (ZeroPadding2D)                     (None, 29, 29, 192)              0                 ['block_6_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_6_depthwise (DepthwiseConv2D)             (None, 14, 14, 192)              1728              ['block_6_pad[0][0]']                             
+                                                                                                                                                      
+ block_6_depthwise_BN (BatchNormalization)       (None, 14, 14, 192)              768               ['block_6_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_6_depthwise_relu (ReLU)                   (None, 14, 14, 192)              0                 ['block_6_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_6_project (Conv2D)                        (None, 14, 14, 64)               12288             ['block_6_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_6_project_BN (BatchNormalization)         (None, 14, 14, 64)               256               ['block_6_project[0][0]']                         
+                                                                                                                                                      
+ block_7_expand (Conv2D)                         (None, 14, 14, 384)              24576             ['block_6_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_7_expand_BN (BatchNormalization)          (None, 14, 14, 384)              1536              ['block_7_expand[0][0]']                          
+                                                                                                                                                      
+ block_7_expand_relu (ReLU)                      (None, 14, 14, 384)              0                 ['block_7_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_7_depthwise (DepthwiseConv2D)             (None, 14, 14, 384)              3456              ['block_7_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_7_depthwise_BN (BatchNormalization)       (None, 14, 14, 384)              1536              ['block_7_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_7_depthwise_relu (ReLU)                   (None, 14, 14, 384)              0                 ['block_7_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_7_project (Conv2D)                        (None, 14, 14, 64)               24576             ['block_7_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_7_project_BN (BatchNormalization)         (None, 14, 14, 64)               256               ['block_7_project[0][0]']                         
+                                                                                                                                                      
+ block_7_add (Add)                               (None, 14, 14, 64)               0                 ['block_6_project_BN[0][0]',                      
+                                                                                                     'block_7_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_8_expand (Conv2D)                         (None, 14, 14, 384)              24576             ['block_7_add[0][0]']                             
+                                                                                                                                                      
+ block_8_expand_BN (BatchNormalization)          (None, 14, 14, 384)              1536              ['block_8_expand[0][0]']                          
+                                                                                                                                                      
+ block_8_expand_relu (ReLU)                      (None, 14, 14, 384)              0                 ['block_8_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_8_depthwise (DepthwiseConv2D)             (None, 14, 14, 384)              3456              ['block_8_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_8_depthwise_BN (BatchNormalization)       (None, 14, 14, 384)              1536              ['block_8_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_8_depthwise_relu (ReLU)                   (None, 14, 14, 384)              0                 ['block_8_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_8_project (Conv2D)                        (None, 14, 14, 64)               24576             ['block_8_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_8_project_BN (BatchNormalization)         (None, 14, 14, 64)               256               ['block_8_project[0][0]']                         
+                                                                                                                                                      
+ block_8_add (Add)                               (None, 14, 14, 64)               0                 ['block_7_add[0][0]',                             
+                                                                                                     'block_8_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_9_expand (Conv2D)                         (None, 14, 14, 384)              24576             ['block_8_add[0][0]']                             
+                                                                                                                                                      
+ block_9_expand_BN (BatchNormalization)          (None, 14, 14, 384)              1536              ['block_9_expand[0][0]']                          
+                                                                                                                                                      
+ block_9_expand_relu (ReLU)                      (None, 14, 14, 384)              0                 ['block_9_expand_BN[0][0]']                       
+                                                                                                                                                      
+ block_9_depthwise (DepthwiseConv2D)             (None, 14, 14, 384)              3456              ['block_9_expand_relu[0][0]']                     
+                                                                                                                                                      
+ block_9_depthwise_BN (BatchNormalization)       (None, 14, 14, 384)              1536              ['block_9_depthwise[0][0]']                       
+                                                                                                                                                      
+ block_9_depthwise_relu (ReLU)                   (None, 14, 14, 384)              0                 ['block_9_depthwise_BN[0][0]']                    
+                                                                                                                                                      
+ block_9_project (Conv2D)                        (None, 14, 14, 64)               24576             ['block_9_depthwise_relu[0][0]']                  
+                                                                                                                                                      
+ block_9_project_BN (BatchNormalization)         (None, 14, 14, 64)               256               ['block_9_project[0][0]']                         
+                                                                                                                                                      
+ block_9_add (Add)                               (None, 14, 14, 64)               0                 ['block_8_add[0][0]',                             
+                                                                                                     'block_9_project_BN[0][0]']                      
+                                                                                                                                                      
+ block_10_expand (Conv2D)                        (None, 14, 14, 384)              24576             ['block_9_add[0][0]']                             
+                                                                                                                                                      
+ block_10_expand_BN (BatchNormalization)         (None, 14, 14, 384)              1536              ['block_10_expand[0][0]']                         
+                                                                                                                                                      
+ block_10_expand_relu (ReLU)                     (None, 14, 14, 384)              0                 ['block_10_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_10_depthwise (DepthwiseConv2D)            (None, 14, 14, 384)              3456              ['block_10_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_10_depthwise_BN (BatchNormalization)      (None, 14, 14, 384)              1536              ['block_10_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_10_depthwise_relu (ReLU)                  (None, 14, 14, 384)              0                 ['block_10_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_10_project (Conv2D)                       (None, 14, 14, 96)               36864             ['block_10_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_10_project_BN (BatchNormalization)        (None, 14, 14, 96)               384               ['block_10_project[0][0]']                        
+                                                                                                                                                      
+ block_11_expand (Conv2D)                        (None, 14, 14, 576)              55296             ['block_10_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_11_expand_BN (BatchNormalization)         (None, 14, 14, 576)              2304              ['block_11_expand[0][0]']                         
+                                                                                                                                                      
+ block_11_expand_relu (ReLU)                     (None, 14, 14, 576)              0                 ['block_11_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_11_depthwise (DepthwiseConv2D)            (None, 14, 14, 576)              5184              ['block_11_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_11_depthwise_BN (BatchNormalization)      (None, 14, 14, 576)              2304              ['block_11_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_11_depthwise_relu (ReLU)                  (None, 14, 14, 576)              0                 ['block_11_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_11_project (Conv2D)                       (None, 14, 14, 96)               55296             ['block_11_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_11_project_BN (BatchNormalization)        (None, 14, 14, 96)               384               ['block_11_project[0][0]']                        
+                                                                                                                                                      
+ block_11_add (Add)                              (None, 14, 14, 96)               0                 ['block_10_project_BN[0][0]',                     
+                                                                                                     'block_11_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_12_expand (Conv2D)                        (None, 14, 14, 576)              55296             ['block_11_add[0][0]']                            
+                                                                                                                                                      
+ block_12_expand_BN (BatchNormalization)         (None, 14, 14, 576)              2304              ['block_12_expand[0][0]']                         
+                                                                                                                                                      
+ block_12_expand_relu (ReLU)                     (None, 14, 14, 576)              0                 ['block_12_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_12_depthwise (DepthwiseConv2D)            (None, 14, 14, 576)              5184              ['block_12_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_12_depthwise_BN (BatchNormalization)      (None, 14, 14, 576)              2304              ['block_12_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_12_depthwise_relu (ReLU)                  (None, 14, 14, 576)              0                 ['block_12_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_12_project (Conv2D)                       (None, 14, 14, 96)               55296             ['block_12_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_12_project_BN (BatchNormalization)        (None, 14, 14, 96)               384               ['block_12_project[0][0]']                        
+                                                                                                                                                      
+ block_12_add (Add)                              (None, 14, 14, 96)               0                 ['block_11_add[0][0]',                            
+                                                                                                     'block_12_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_13_expand (Conv2D)                        (None, 14, 14, 576)              55296             ['block_12_add[0][0]']                            
+                                                                                                                                                      
+ block_13_expand_BN (BatchNormalization)         (None, 14, 14, 576)              2304              ['block_13_expand[0][0]']                         
+                                                                                                                                                      
+ block_13_expand_relu (ReLU)                     (None, 14, 14, 576)              0                 ['block_13_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_13_pad (ZeroPadding2D)                    (None, 15, 15, 576)              0                 ['block_13_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_13_depthwise (DepthwiseConv2D)            (None, 7, 7, 576)                5184              ['block_13_pad[0][0]']                            
+                                                                                                                                                      
+ block_13_depthwise_BN (BatchNormalization)      (None, 7, 7, 576)                2304              ['block_13_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_13_depthwise_relu (ReLU)                  (None, 7, 7, 576)                0                 ['block_13_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_13_project (Conv2D)                       (None, 7, 7, 160)                92160             ['block_13_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_13_project_BN (BatchNormalization)        (None, 7, 7, 160)                640               ['block_13_project[0][0]']                        
+                                                                                                                                                      
+ block_14_expand (Conv2D)                        (None, 7, 7, 960)                153600            ['block_13_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_14_expand_BN (BatchNormalization)         (None, 7, 7, 960)                3840              ['block_14_expand[0][0]']                         
+                                                                                                                                                      
+ block_14_expand_relu (ReLU)                     (None, 7, 7, 960)                0                 ['block_14_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_14_depthwise (DepthwiseConv2D)            (None, 7, 7, 960)                8640              ['block_14_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_14_depthwise_BN (BatchNormalization)      (None, 7, 7, 960)                3840              ['block_14_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_14_depthwise_relu (ReLU)                  (None, 7, 7, 960)                0                 ['block_14_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_14_project (Conv2D)                       (None, 7, 7, 160)                153600            ['block_14_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_14_project_BN (BatchNormalization)        (None, 7, 7, 160)                640               ['block_14_project[0][0]']                        
+                                                                                                                                                      
+ block_14_add (Add)                              (None, 7, 7, 160)                0                 ['block_13_project_BN[0][0]',                     
+                                                                                                     'block_14_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_15_expand (Conv2D)                        (None, 7, 7, 960)                153600            ['block_14_add[0][0]']                            
+                                                                                                                                                      
+ block_15_expand_BN (BatchNormalization)         (None, 7, 7, 960)                3840              ['block_15_expand[0][0]']                         
+                                                                                                                                                      
+ block_15_expand_relu (ReLU)                     (None, 7, 7, 960)                0                 ['block_15_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_15_depthwise (DepthwiseConv2D)            (None, 7, 7, 960)                8640              ['block_15_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_15_depthwise_BN (BatchNormalization)      (None, 7, 7, 960)                3840              ['block_15_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_15_depthwise_relu (ReLU)                  (None, 7, 7, 960)                0                 ['block_15_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_15_project (Conv2D)                       (None, 7, 7, 160)                153600            ['block_15_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_15_project_BN (BatchNormalization)        (None, 7, 7, 160)                640               ['block_15_project[0][0]']                        
+                                                                                                                                                      
+ block_15_add (Add)                              (None, 7, 7, 160)                0                 ['block_14_add[0][0]',                            
+                                                                                                     'block_15_project_BN[0][0]']                     
+                                                                                                                                                      
+ block_16_expand (Conv2D)                        (None, 7, 7, 960)                153600            ['block_15_add[0][0]']                            
+                                                                                                                                                      
+ block_16_expand_BN (BatchNormalization)         (None, 7, 7, 960)                3840              ['block_16_expand[0][0]']                         
+                                                                                                                                                      
+ block_16_expand_relu (ReLU)                     (None, 7, 7, 960)                0                 ['block_16_expand_BN[0][0]']                      
+                                                                                                                                                      
+ block_16_depthwise (DepthwiseConv2D)            (None, 7, 7, 960)                8640              ['block_16_expand_relu[0][0]']                    
+                                                                                                                                                      
+ block_16_depthwise_BN (BatchNormalization)      (None, 7, 7, 960)                3840              ['block_16_depthwise[0][0]']                      
+                                                                                                                                                      
+ block_16_depthwise_relu (ReLU)                  (None, 7, 7, 960)                0                 ['block_16_depthwise_BN[0][0]']                   
+                                                                                                                                                      
+ block_16_project (Conv2D)                       (None, 7, 7, 320)                307200            ['block_16_depthwise_relu[0][0]']                 
+                                                                                                                                                      
+ block_16_project_BN (BatchNormalization)        (None, 7, 7, 320)                1280              ['block_16_project[0][0]']                        
+                                                                                                                                                      
+ Conv_1 (Conv2D)                                 (None, 7, 7, 1280)               409600            ['block_16_project_BN[0][0]']                     
+                                                                                                                                                      
+ Conv_1_bn (BatchNormalization)                  (None, 7, 7, 1280)               5120              ['Conv_1[0][0]']                                  
+                                                                                                                                                      
+ out_relu (ReLU)                                 (None, 7, 7, 1280)               0                 ['Conv_1_bn[0][0]']                               
+                                                                                                                                                      
+ global_average_pooling2d (GlobalAveragePooling2  (None, 1280)                    0                 ['out_relu[0][0]']                                
+ D)                                                                                                                                                   
+                                                                                                                                                      
+ dense (Dense)                                   (None, 8631)                     11056311          ['global_average_pooling2d[0][0]']                
+                                                                                                                                                      
+======================================================================================================================================================
+Total params: 13,314,295
+Trainable params: 13,280,183
+Non-trainable params: 34,112
+______________________________________________________________________________________________________________________________________________________
+Epoch 1/25
+Epoch 00001: val_accuracy improved from -inf to 0.70027, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3446s 311ms/step - loss: 2.9497 - accuracy: 0.4908 - top-5-accuracy: 0.6538 - top-10-accuracy: 0.7119 - top-100-accuracy: 0.8687 - val_loss: 1.4240 - val_accuracy: 0.7003 - val_top-5-accuracy: 0.8539 - val_top-10-accuracy: 0.8953 - val_top-100-accuracy: 0.9759
+Epoch 2/25
+Epoch 00002: val_accuracy improved from 0.70027 to 0.83601, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3451s 312ms/step - loss: 0.9672 - accuracy: 0.7959 - top-5-accuracy: 0.9071 - top-10-accuracy: 0.9348 - top-100-accuracy: 0.9855 - val_loss: 0.7466 - val_accuracy: 0.8360 - val_top-5-accuracy: 0.9333 - val_top-10-accuracy: 0.9547 - val_top-100-accuracy: 0.9909
+Epoch 3/25
+Epoch 00003: val_accuracy improved from 0.83601 to 0.87064, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3461s 313ms/step - loss: 0.6250 - accuracy: 0.8633 - top-5-accuracy: 0.9446 - top-10-accuracy: 0.9626 - top-100-accuracy: 0.9925 - val_loss: 0.5745 - val_accuracy: 0.8706 - val_top-5-accuracy: 0.9524 - val_top-10-accuracy: 0.9691 - val_top-100-accuracy: 0.9943
+Epoch 4/25
+Epoch 00004: val_accuracy improved from 0.87064 to 0.90236, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3451s 312ms/step - loss: 0.4612 - accuracy: 0.8969 - top-5-accuracy: 0.9619 - top-10-accuracy: 0.9749 - top-100-accuracy: 0.9952 - val_loss: 0.4232 - val_accuracy: 0.9024 - val_top-5-accuracy: 0.9674 - val_top-10-accuracy: 0.9791 - val_top-100-accuracy: 0.9964
+Epoch 5/25
+Epoch 00005: val_accuracy improved from 0.90236 to 0.92468, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3468s 314ms/step - loss: 0.3604 - accuracy: 0.9181 - top-5-accuracy: 0.9721 - top-10-accuracy: 0.9819 - top-100-accuracy: 0.9968 - val_loss: 0.3239 - val_accuracy: 0.9247 - val_top-5-accuracy: 0.9771 - val_top-10-accuracy: 0.9855 - val_top-100-accuracy: 0.9976
+Epoch 6/25
+Epoch 00006: val_accuracy improved from 0.92468 to 0.93362, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3455s 313ms/step - loss: 0.2913 - accuracy: 0.9328 - top-5-accuracy: 0.9787 - top-10-accuracy: 0.9866 - top-100-accuracy: 0.9978 - val_loss: 0.2783 - val_accuracy: 0.9336 - val_top-5-accuracy: 0.9816 - val_top-10-accuracy: 0.9886 - val_top-100-accuracy: 0.9984
+Epoch 7/25
+Epoch 00007: val_accuracy did not improve from 0.9336211046/11046 [==============================] - 3436s 311ms/step - loss: 0.2407 - accuracy: 0.9436 - top-5-accuracy: 0.9835 - top-10-accuracy: 0.9898 - top-100-accuracy: 0.9984 - val_loss: 0.2714 - val_accuracy: 0.9319 - val_top-5-accuracy: 0.9826 - val_top-10-accuracy: 0.9900 - val_top-100-accuracy: 0.9986
+Epoch 8/25
+Epoch 00008: val_accuracy improved from 0.93362 to 0.95498, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3440s 311ms/step - loss: 0.2013 - accuracy: 0.9522 - top-5-accuracy: 0.9872 - top-10-accuracy: 0.9922 - top-100-accuracy: 0.9989 - val_loss: 0.1851 - val_accuracy: 0.9550 - val_top-5-accuracy: 0.9900 - val_top-10-accuracy: 0.9942 - val_top-100-accuracy: 0.9993
+Epoch 9/25
+Epoch 00009: val_accuracy did not improve from 0.9549811046/11046 [==============================] - 3459s 313ms/step - loss: 0.1699 - accuracy: 0.9590 - top-5-accuracy: 0.9899 - top-10-accuracy: 0.9940 - top-100-accuracy: 0.9992 - val_loss: 0.1860 - val_accuracy: 0.9511 - val_top-5-accuracy: 0.9903 - val_top-10-accuracy: 0.9950 - val_top-100-accuracy: 0.9994
+Epoch 10/25
+Epoch 00010: val_accuracy improved from 0.95498 to 0.95772, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3447s 312ms/step - loss: 0.1451 - accuracy: 0.9644 - top-5-accuracy: 0.9920 - top-10-accuracy: 0.9954 - top-100-accuracy: 0.9994 - val_loss: 0.1597 - val_accuracy: 0.9577 - val_top-5-accuracy: 0.9926 - val_top-10-accuracy: 0.9961 - val_top-100-accuracy: 0.9995
+Epoch 11/25
+Epoch 00011: val_accuracy did not improve from 0.9577211046/11046 [==============================] - 3459s 313ms/step - loss: 0.1248 - accuracy: 0.9689 - top-5-accuracy: 0.9936 - top-10-accuracy: 0.9964 - top-100-accuracy: 0.9996 - val_loss: 0.1626 - val_accuracy: 0.9551 - val_top-5-accuracy: 0.9927 - val_top-10-accuracy: 0.9966 - val_top-100-accuracy: 0.9997
+Epoch 12/25
+Epoch 00012: val_accuracy improved from 0.95772 to 0.97526, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3472s 314ms/step - loss: 0.1077 - accuracy: 0.9728 - top-5-accuracy: 0.9950 - top-10-accuracy: 0.9973 - top-100-accuracy: 0.9997 - val_loss: 0.0944 - val_accuracy: 0.9753 - val_top-5-accuracy: 0.9967 - val_top-10-accuracy: 0.9983 - val_top-100-accuracy: 0.9999
+Epoch 13/25
+Epoch 00013: val_accuracy did not improve from 0.9752611046/11046 [==============================] - 3464s 314ms/step - loss: 0.0937 - accuracy: 0.9759 - top-5-accuracy: 0.9961 - top-10-accuracy: 0.9979 - top-100-accuracy: 0.9998 - val_loss: 0.0970 - val_accuracy: 0.9736 - val_top-5-accuracy: 0.9967 - val_top-10-accuracy: 0.9984 - val_top-100-accuracy: 0.9999
+Epoch 14/25
+Epoch 00014: val_accuracy improved from 0.97526 to 0.97551, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3473s 314ms/step - loss: 0.0820 - accuracy: 0.9786 - top-5-accuracy: 0.9969 - top-10-accuracy: 0.9984 - top-100-accuracy: 0.9999 - val_loss: 0.0881 - val_accuracy: 0.9755 - val_top-5-accuracy: 0.9971 - val_top-10-accuracy: 0.9987 - val_top-100-accuracy: 0.9999
+Epoch 15/25
+Epoch 00015: val_accuracy improved from 0.97551 to 0.97630, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3458s 313ms/step - loss: 0.0726 - accuracy: 0.9809 - top-5-accuracy: 0.9975 - top-10-accuracy: 0.9988 - top-100-accuracy: 0.9999 - val_loss: 0.0846 - val_accuracy: 0.9763 - val_top-5-accuracy: 0.9976 - val_top-10-accuracy: 0.9990 - val_top-100-accuracy: 1.0000
+Epoch 16/25
+Epoch 00016: val_accuracy improved from 0.97630 to 0.97727, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3463s 313ms/step - loss: 0.0643 - accuracy: 0.9829 - top-5-accuracy: 0.9981 - top-10-accuracy: 0.9991 - top-100-accuracy: 0.9999 - val_loss: 0.0778 - val_accuracy: 0.9773 - val_top-5-accuracy: 0.9981 - val_top-10-accuracy: 0.9993 - val_top-100-accuracy: 1.0000
+Epoch 17/25
+Epoch 00017: val_accuracy improved from 0.97727 to 0.97786, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3451s 312ms/step - loss: 0.0572 - accuracy: 0.9846 - top-5-accuracy: 0.9985 - top-10-accuracy: 0.9993 - top-100-accuracy: 1.0000 - val_loss: 0.0758 - val_accuracy: 0.9779 - val_top-5-accuracy: 0.9982 - val_top-10-accuracy: 0.9993 - val_top-100-accuracy: 1.0000
+Epoch 18/25
+Epoch 00018: val_accuracy improved from 0.97786 to 0.97878, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3426s 310ms/step - loss: 0.0517 - accuracy: 0.9860 - top-5-accuracy: 0.9988 - top-10-accuracy: 0.9995 - top-100-accuracy: 1.0000 - val_loss: 0.0705 - val_accuracy: 0.9788 - val_top-5-accuracy: 0.9986 - val_top-10-accuracy: 0.9995 - val_top-100-accuracy: 1.0000
+Epoch 19/25
+Epoch 00019: val_accuracy improved from 0.97878 to 0.97922, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3425s 310ms/step - loss: 0.0468 - accuracy: 0.9872 - top-5-accuracy: 0.9990 - top-10-accuracy: 0.9996 - top-100-accuracy: 1.0000 - val_loss: 0.0694 - val_accuracy: 0.9792 - val_top-5-accuracy: 0.9986 - val_top-10-accuracy: 0.9996 - val_top-100-accuracy: 1.0000
+Epoch 20/25
+Epoch 00020: val_accuracy improved from 0.97922 to 0.98256, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3418s 309ms/step - loss: 0.0424 - accuracy: 0.9882 - top-5-accuracy: 0.9992 - top-10-accuracy: 0.9997 - top-100-accuracy: 1.0000 - val_loss: 0.0584 - val_accuracy: 0.9826 - val_top-5-accuracy: 0.9991 - val_top-10-accuracy: 0.9997 - val_top-100-accuracy: 1.0000
+Epoch 21/25
+Epoch 00021: val_accuracy did not improve from 0.9825611046/11046 [==============================] - 3425s 310ms/step - loss: 0.0391 - accuracy: 0.9891 - top-5-accuracy: 0.9993 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 0.0739 - val_accuracy: 0.9775 - val_top-5-accuracy: 0.9984 - val_top-10-accuracy: 0.9995 - val_top-100-accuracy: 1.0000
+Epoch 22/25
+Epoch 00022: val_accuracy improved from 0.98256 to 0.98781, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3420s 309ms/step - loss: 0.0362 - accuracy: 0.9899 - top-5-accuracy: 0.9995 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 0.0415 - val_accuracy: 0.9878 - val_top-5-accuracy: 0.9995 - val_top-10-accuracy: 0.9999 - val_top-100-accuracy: 1.0000
+Epoch 23/25
+Epoch 00023: val_accuracy did not improve from 0.9878111046/11046 [==============================] - 3420s 310ms/step - loss: 0.0334 - accuracy: 0.9907 - top-5-accuracy: 0.9996 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000 - val_loss: 0.0752 - val_accuracy: 0.9770 - val_top-5-accuracy: 0.9985 - val_top-10-accuracy: 0.9996 - val_top-100-accuracy: 1.0000
+Epoch 24/25
+Epoch 00024: val_accuracy improved from 0.98781 to 0.98899, saving model to ./tmp/checkpoint11046/11046 [==============================] - 3436s 311ms/step - loss: 0.0311 - accuracy: 0.9912 - top-5-accuracy: 0.9996 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000 - val_loss: 0.0375 - val_accuracy: 0.9890 - val_top-5-accuracy: 0.9996 - val_top-10-accuracy: 0.9999 - val_top-100-accuracy: 1.0000
+Epoch 25/25
+Epoch 00025: val_accuracy did not improve from 0.9889911046/11046 [==============================] - 3424s 310ms/step - loss: 0.0293 - accuracy: 0.9918 - top-5-accuracy: 0.9997 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000 - val_loss: 0.0413 - val_accuracy: 0.9876 - val_top-5-accuracy: 0.9996 - val_top-10-accuracy: 0.9999 - val_top-100-accuracy: 1.0000614/614 [==============================] - 54s 70ms/step - loss: 0.0374 - accuracy: 0.9892 - top-5-accuracy: 0.9996 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000
+Accuracy on the test set: 98.92%.
+Top 5 Accuracy on the test set: 99.96%.
+Top 10 Accuracy on the test set: 99.99%.
+Top 100 Accuracy on the test set: 100.0%.
