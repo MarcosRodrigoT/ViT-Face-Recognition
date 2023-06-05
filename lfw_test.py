@@ -37,12 +37,18 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     vit_results = []
     resnet_results = []
     vgg_results = []
+    inception_results = []
+    mobilenet_results = []
+    efficientnet_results = []
     gt_results = []
 
     for pair_example in results_dictionary.keys():
         vit_results.append(results_dictionary[pair_example]['vit'])
         resnet_results.append(results_dictionary[pair_example]['resnet'])
         vgg_results.append(results_dictionary[pair_example]['vgg'])
+        inception_results.append(results_dictionary[pair_example]['inception'])
+        mobilenet_results.append(results_dictionary[pair_example]['mobilenet'])
+        efficientnet_results.append(results_dictionary[pair_example]['efficientnet'])
         gt_results.append(results_dictionary[pair_example]['GT'])
 
     # Figures
@@ -58,7 +64,7 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_vit_threshold = thresholds_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]
 
     # Plot
-    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label='ViT_B32 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vit), '{0:.3f}'.format(auc_vit)))
+    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label=f'ViT_B32 (EER={eer_vit:.2f}, AUC={auc_vit:.3f})')
     ax.scatter(eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))], color='blue', linewidths=8, zorder=10)
 
     # CSV
@@ -66,7 +72,7 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     vit_pd['EER_ViT'] = pd.DataFrame([eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]])
     vit_pd.to_csv('./saved_results/Tests/LFW/ViT_B32_ROC.csv', header=True, index=False)
 
-    """ ResNet_B32 """
+    """ ResNet_50 """
     # Data
     fpr_resnet, tpr_resnet, thresholds_resnet = roc_curve(gt_results, resnet_results, pos_label=positive_label)
     auc_resnet = auc(fpr_resnet, tpr_resnet)
@@ -75,7 +81,7 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_resnet_threshold = thresholds_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]
 
     # Plot
-    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label='ResNet_50 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_resnet), '{0:.3f}'.format(auc_resnet)))
+    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label=f'ResNet_50 (EER={eer_resnet:.2f}, AUC={auc_resnet:.3f})')
     ax.scatter(eer_resnet, tpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))], color='orange', linewidths=8, zorder=10)
 
     # CSV
@@ -92,13 +98,64 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_vgg_threshold = thresholds_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]
 
     # Plot
-    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label='VGG_16 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vgg), '{0:.3f}'.format(auc_vgg)))
+    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label=f'VGG_16 (EER={eer_vgg:.2f}, AUC={auc_vgg:.3f})')
     ax.scatter(eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))], color='green', linewidths=8, zorder=10)
 
     # CSV
     vgg_pd = pd.DataFrame({'FPR_VGG': fpr_vgg, 'TPR_VGG': tpr_vgg})
     vgg_pd['EER_VGG'] = pd.DataFrame([eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]])
     vgg_pd.to_csv('./saved_results/Tests/LFW/VGG_16_ROC.csv', header=True, index=False)
+
+    """ Inception_V3 """
+    # Data
+    fpr_inception, tpr_inception, thresholds_inception = roc_curve(gt_results, inception_results, pos_label=positive_label)
+    auc_inception = auc(fpr_inception, tpr_inception)
+    fnr_inception = 1 - tpr_inception
+    eer_inception = fpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
+    eer_inception_threshold = thresholds_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
+
+    # Plot
+    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label=f'Inception_V3 (EER={eer_inception:.2f}, AUC={auc_inception:.3f})')
+    ax.scatter(eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))], color='cyan', linewidths=8, zorder=10)
+
+    # CSV
+    inception_pd = pd.DataFrame({'FPR_INCEPTION': fpr_inception, 'TPR_INCEPTION': tpr_inception})
+    inception_pd['EER_INCEPTION'] = pd.DataFrame([eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]])
+    inception_pd.to_csv('./saved_results/Tests/LFW/Inception_V3_ROC.csv', header=True, index=False)
+
+    """ MobileNet_V2 """
+    # Data
+    fpr_mobilenet, tpr_mobilenet, thresholds_mobilenet = roc_curve(gt_results, mobilenet_results, pos_label=positive_label)
+    auc_mobilenet = auc(fpr_mobilenet, tpr_mobilenet)
+    fnr_mobilenet = 1 - tpr_mobilenet
+    eer_mobilenet = fpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
+    eer_mobilenet_threshold = thresholds_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
+
+    # Plot
+    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label=f'MobileNet_V2 (EER={eer_mobilenet:.2f}, AUC={auc_mobilenet:.3f})')
+    ax.scatter(eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))], color='magenta', linewidths=8, zorder=10)
+
+    # CSV
+    mobilenet_pd = pd.DataFrame({'FPR_MOBILENET': fpr_mobilenet, 'TPR_MOBILENET': tpr_mobilenet})
+    mobilenet_pd['EER_MOBILENET'] = pd.DataFrame([eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]])
+    mobilenet_pd.to_csv('./saved_results/Tests/LFW/MobileNet_V2_ROC.csv', header=True, index=False)
+
+    """ EfficientNet_B0 """
+    # Data
+    fpr_efficientnet, tpr_efficientnet, thresholds_efficientnet = roc_curve(gt_results, efficientnet_results, pos_label=positive_label)
+    auc_efficientnet = auc(fpr_efficientnet, tpr_efficientnet)
+    fnr_efficientnet = 1 - tpr_efficientnet
+    eer_efficientnet = fpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
+    eer_efficientnet_threshold = thresholds_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
+
+    # Plot
+    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label=f'EfficientNet_B0 (EER={eer_efficientnet:.2f}, AUC={auc_efficientnet:.3f})')
+    ax.scatter(eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))], color='brown', linewidths=8, zorder=10)
+
+    # CSV
+    efficientnet_pd = pd.DataFrame({'FPR_EFFICIENTNET': fpr_efficientnet, 'TPR_EFFICIENTNET': tpr_efficientnet})
+    efficientnet_pd['EER_EFFICIENTNET'] = pd.DataFrame([eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]])
+    efficientnet_pd.to_csv('./saved_results/Tests/LFW/EfficientNet_B0_ROC.csv', header=True, index=False)
 
     ax.set_title('Receiver Operating Characteristics (ROC)', fontsize=15)
     ax.set_xlabel('FPR', fontsize=15)
@@ -191,6 +248,54 @@ vgg16_model.load_weights("./saved_results/Models/VGG_16/checkpoint").expect_part
 vgg16_model = tf.keras.models.Model(inputs=vgg16_model.input, outputs=vgg16_model.layers[-2].output)
 vgg16_model.summary()
 
+""" Inception_v3 """
+inception_model = tf.keras.applications.InceptionV3(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(inception_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+inception_model = tf.keras.models.Model(inputs=inception_model.input, outputs=Y, name='InceptionV3')
+inception_model.summary()
+
+inception_model.load_weights("./saved_results/Models/Inception_V3/checkpoint").expect_partial()   # suppresses warnings
+inception_model = tf.keras.models.Model(inputs=inception_model.input, outputs=inception_model.layers[-2].output)
+inception_model.summary()
+
+""" MobileNet_v2 """
+mobilenet_model = tf.keras.applications.MobileNetV2(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(mobilenet_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+mobilenet_model = tf.keras.models.Model(inputs=mobilenet_model.input, outputs=Y, name='MobileNetV2')
+mobilenet_model.summary()
+
+mobilenet_model.load_weights("./saved_results/Models/MobileNet_V2/checkpoint").expect_partial()   # suppresses warnings
+mobilenet_model = tf.keras.models.Model(inputs=mobilenet_model.input, outputs=mobilenet_model.layers[-2].output)
+mobilenet_model.summary()
+
+""" EfficientNet_B0 """
+efficientnetB0_model = tf.keras.applications.EfficientNetB0(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(efficientnetB0_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+efficientnetB0_model = tf.keras.models.Model(inputs=efficientnetB0_model.input, outputs=Y, name='EfficientNetB0')
+efficientnetB0_model.summary()
+
+efficientnetB0_model.load_weights("./saved_results/Models/EfficientNet_B0/checkpoint").expect_partial()   # suppresses warnings
+efficientnetB0_model = tf.keras.models.Model(inputs=efficientnetB0_model.input, outputs=efficientnetB0_model.layers[-2].output)
+efficientnetB0_model.summary()
+
 
 """
 PREPROCESS IMAGE PAIRS AND COMPUTE SCORE MODELS
@@ -247,7 +352,51 @@ except FileNotFoundError:
         print('VGG16 score:')
         print('- Score:', score_vgg16)
 
-        results[key] = {'vit': score_vit, 'resnet': score_resnet, 'vgg': score_vgg16, 'GT': val[-1]}
+        embeddings1_inception = inception_model(img1_).numpy()
+        embeddings2_inception = inception_model(img2_).numpy()
+        print('InceptionV3 embeddings:')
+        print('- Shape:', embeddings1_inception.shape)
+        print('- Dtype:', embeddings1_inception.dtype)
+        print('- Mean:', tf.reduce_mean(embeddings1_inception))
+        print('- Min:', tf.reduce_min(embeddings1_inception))
+        print('- Max:', tf.reduce_max(embeddings1_inception))
+        score_inception = compute_score(embeddings1_inception, embeddings2_inception)
+        print('InceptionV3 score:')
+        print('- Score:', score_inception)
+
+        embeddings1_mobilenet = mobilenet_model(img1_).numpy()
+        embeddings2_mobilenet = mobilenet_model(img2_).numpy()
+        print('MobileNetV2 embeddings:')
+        print('- Shape:', embeddings1_mobilenet.shape)
+        print('- Dtype:', embeddings1_mobilenet.dtype)
+        print('- Mean:', tf.reduce_mean(embeddings1_mobilenet))
+        print('- Min:', tf.reduce_min(embeddings1_mobilenet))
+        print('- Max:', tf.reduce_max(embeddings1_mobilenet))
+        score_mobilenet = compute_score(embeddings1_mobilenet, embeddings2_mobilenet)
+        print('MobileNetV2 score:')
+        print('- Score:', score_mobilenet)
+
+        embeddings1_efficientnet = efficientnetB0_model(img1_).numpy()
+        embeddings2_efficientnet = efficientnetB0_model(img2_).numpy()
+        print('EfficientNetB0 embeddings:')
+        print('- Shape:', embeddings1_efficientnet.shape)
+        print('- Dtype:', embeddings1_efficientnet.dtype)
+        print('- Mean:', tf.reduce_mean(embeddings1_efficientnet))
+        print('- Min:', tf.reduce_min(embeddings1_efficientnet))
+        print('- Max:', tf.reduce_max(embeddings1_efficientnet))
+        score_efficientnet = compute_score(embeddings1_efficientnet, embeddings2_efficientnet)
+        print('EfficientNetB0 score:')
+        print('- Score:', score_efficientnet)
+
+        results[key] = {
+            'vit': score_vit,
+            'resnet': score_resnet,
+            'vgg': score_vgg16,
+            'inception': score_inception,
+            'mobilenet': score_mobilenet,
+            'efficientnet': score_efficientnet,
+            'GT': val[-1]
+        }
 
     with open('./saved_results/Tests/LFW/results.pickle', 'wb') as file:
         pickle.dump(results, file)
@@ -258,5 +407,8 @@ for key, val in results.items():
     print(f"[INFO] \t ViT: \t\t{round(val['vit'], 2)}")
     print(f"[INFO] \t ResNet: \t{round(val['resnet'], 2)}")
     print(f"[INFO] \t VGG: \t\t{round(val['vgg'], 2)}")
+    print(f"[INFO] \t Inception: \t\t{round(val['inception'], 2)}")
+    print(f"[INFO] \t MobileNet: \t\t{round(val['mobilenet'], 2)}")
+    print(f"[INFO] \t Efficientnet: \t\t{round(val['efficientnet'], 2)}")
 
 compute_roc(results, fig_name='ROC', positive_label=1)
