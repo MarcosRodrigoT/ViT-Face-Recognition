@@ -1,0 +1,571 @@
+[INFO] Num images for train: 2827701 -> train_ds: 2827701
+[INFO] Num images for validation: 157094 -> val_ds: 157094
+[INFO] Num images for test: 157094 -> test_ds: 157095
+Model: "EfficientNetB0"
+______________________________________________________________________________________________________________________________________________________
+ Layer (type)                                    Output Shape                     Param #           Connected to                                      
+======================================================================================================================================================
+ input_1 (InputLayer)                            [(None, 224, 224, 3)]            0                 []                                                
+                                                                                                                                                      
+ rescaling (Rescaling)                           (None, 224, 224, 3)              0                 ['input_1[0][0]']                                 
+                                                                                                                                                      
+ normalization (Normalization)                   (None, 224, 224, 3)              7                 ['rescaling[0][0]']                               
+                                                                                                                                                      
+ stem_conv_pad (ZeroPadding2D)                   (None, 225, 225, 3)              0                 ['normalization[0][0]']                           
+                                                                                                                                                      
+ stem_conv (Conv2D)                              (None, 112, 112, 32)             864               ['stem_conv_pad[0][0]']                           
+                                                                                                                                                      
+ stem_bn (BatchNormalization)                    (None, 112, 112, 32)             128               ['stem_conv[0][0]']                               
+                                                                                                                                                      
+ stem_activation (Activation)                    (None, 112, 112, 32)             0                 ['stem_bn[0][0]']                                 
+                                                                                                                                                      
+ block1a_dwconv (DepthwiseConv2D)                (None, 112, 112, 32)             288               ['stem_activation[0][0]']                         
+                                                                                                                                                      
+ block1a_bn (BatchNormalization)                 (None, 112, 112, 32)             128               ['block1a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block1a_activation (Activation)                 (None, 112, 112, 32)             0                 ['block1a_bn[0][0]']                              
+                                                                                                                                                      
+ block1a_se_squeeze (GlobalAveragePooling2D)     (None, 32)                       0                 ['block1a_activation[0][0]']                      
+                                                                                                                                                      
+ block1a_se_reshape (Reshape)                    (None, 1, 1, 32)                 0                 ['block1a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block1a_se_reduce (Conv2D)                      (None, 1, 1, 8)                  264               ['block1a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block1a_se_expand (Conv2D)                      (None, 1, 1, 32)                 288               ['block1a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block1a_se_excite (Multiply)                    (None, 112, 112, 32)             0                 ['block1a_activation[0][0]',                      
+                                                                                                     'block1a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block1a_project_conv (Conv2D)                   (None, 112, 112, 16)             512               ['block1a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block1a_project_bn (BatchNormalization)         (None, 112, 112, 16)             64                ['block1a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block2a_expand_conv (Conv2D)                    (None, 112, 112, 96)             1536              ['block1a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block2a_expand_bn (BatchNormalization)          (None, 112, 112, 96)             384               ['block2a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block2a_expand_activation (Activation)          (None, 112, 112, 96)             0                 ['block2a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block2a_dwconv_pad (ZeroPadding2D)              (None, 113, 113, 96)             0                 ['block2a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block2a_dwconv (DepthwiseConv2D)                (None, 56, 56, 96)               864               ['block2a_dwconv_pad[0][0]']                      
+                                                                                                                                                      
+ block2a_bn (BatchNormalization)                 (None, 56, 56, 96)               384               ['block2a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block2a_activation (Activation)                 (None, 56, 56, 96)               0                 ['block2a_bn[0][0]']                              
+                                                                                                                                                      
+ block2a_se_squeeze (GlobalAveragePooling2D)     (None, 96)                       0                 ['block2a_activation[0][0]']                      
+                                                                                                                                                      
+ block2a_se_reshape (Reshape)                    (None, 1, 1, 96)                 0                 ['block2a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block2a_se_reduce (Conv2D)                      (None, 1, 1, 4)                  388               ['block2a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block2a_se_expand (Conv2D)                      (None, 1, 1, 96)                 480               ['block2a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block2a_se_excite (Multiply)                    (None, 56, 56, 96)               0                 ['block2a_activation[0][0]',                      
+                                                                                                     'block2a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block2a_project_conv (Conv2D)                   (None, 56, 56, 24)               2304              ['block2a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block2a_project_bn (BatchNormalization)         (None, 56, 56, 24)               96                ['block2a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block2b_expand_conv (Conv2D)                    (None, 56, 56, 144)              3456              ['block2a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block2b_expand_bn (BatchNormalization)          (None, 56, 56, 144)              576               ['block2b_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block2b_expand_activation (Activation)          (None, 56, 56, 144)              0                 ['block2b_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block2b_dwconv (DepthwiseConv2D)                (None, 56, 56, 144)              1296              ['block2b_expand_activation[0][0]']               
+                                                                                                                                                      
+ block2b_bn (BatchNormalization)                 (None, 56, 56, 144)              576               ['block2b_dwconv[0][0]']                          
+                                                                                                                                                      
+ block2b_activation (Activation)                 (None, 56, 56, 144)              0                 ['block2b_bn[0][0]']                              
+                                                                                                                                                      
+ block2b_se_squeeze (GlobalAveragePooling2D)     (None, 144)                      0                 ['block2b_activation[0][0]']                      
+                                                                                                                                                      
+ block2b_se_reshape (Reshape)                    (None, 1, 1, 144)                0                 ['block2b_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block2b_se_reduce (Conv2D)                      (None, 1, 1, 6)                  870               ['block2b_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block2b_se_expand (Conv2D)                      (None, 1, 1, 144)                1008              ['block2b_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block2b_se_excite (Multiply)                    (None, 56, 56, 144)              0                 ['block2b_activation[0][0]',                      
+                                                                                                     'block2b_se_expand[0][0]']                       
+                                                                                                                                                      
+ block2b_project_conv (Conv2D)                   (None, 56, 56, 24)               3456              ['block2b_se_excite[0][0]']                       
+                                                                                                                                                      
+ block2b_project_bn (BatchNormalization)         (None, 56, 56, 24)               96                ['block2b_project_conv[0][0]']                    
+                                                                                                                                                      
+ block2b_drop (Dropout)                          (None, 56, 56, 24)               0                 ['block2b_project_bn[0][0]']                      
+                                                                                                                                                      
+ block2b_add (Add)                               (None, 56, 56, 24)               0                 ['block2b_drop[0][0]',                            
+                                                                                                     'block2a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block3a_expand_conv (Conv2D)                    (None, 56, 56, 144)              3456              ['block2b_add[0][0]']                             
+                                                                                                                                                      
+ block3a_expand_bn (BatchNormalization)          (None, 56, 56, 144)              576               ['block3a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block3a_expand_activation (Activation)          (None, 56, 56, 144)              0                 ['block3a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block3a_dwconv_pad (ZeroPadding2D)              (None, 59, 59, 144)              0                 ['block3a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block3a_dwconv (DepthwiseConv2D)                (None, 28, 28, 144)              3600              ['block3a_dwconv_pad[0][0]']                      
+                                                                                                                                                      
+ block3a_bn (BatchNormalization)                 (None, 28, 28, 144)              576               ['block3a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block3a_activation (Activation)                 (None, 28, 28, 144)              0                 ['block3a_bn[0][0]']                              
+                                                                                                                                                      
+ block3a_se_squeeze (GlobalAveragePooling2D)     (None, 144)                      0                 ['block3a_activation[0][0]']                      
+                                                                                                                                                      
+ block3a_se_reshape (Reshape)                    (None, 1, 1, 144)                0                 ['block3a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block3a_se_reduce (Conv2D)                      (None, 1, 1, 6)                  870               ['block3a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block3a_se_expand (Conv2D)                      (None, 1, 1, 144)                1008              ['block3a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block3a_se_excite (Multiply)                    (None, 28, 28, 144)              0                 ['block3a_activation[0][0]',                      
+                                                                                                     'block3a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block3a_project_conv (Conv2D)                   (None, 28, 28, 40)               5760              ['block3a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block3a_project_bn (BatchNormalization)         (None, 28, 28, 40)               160               ['block3a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block3b_expand_conv (Conv2D)                    (None, 28, 28, 240)              9600              ['block3a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block3b_expand_bn (BatchNormalization)          (None, 28, 28, 240)              960               ['block3b_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block3b_expand_activation (Activation)          (None, 28, 28, 240)              0                 ['block3b_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block3b_dwconv (DepthwiseConv2D)                (None, 28, 28, 240)              6000              ['block3b_expand_activation[0][0]']               
+                                                                                                                                                      
+ block3b_bn (BatchNormalization)                 (None, 28, 28, 240)              960               ['block3b_dwconv[0][0]']                          
+                                                                                                                                                      
+ block3b_activation (Activation)                 (None, 28, 28, 240)              0                 ['block3b_bn[0][0]']                              
+                                                                                                                                                      
+ block3b_se_squeeze (GlobalAveragePooling2D)     (None, 240)                      0                 ['block3b_activation[0][0]']                      
+                                                                                                                                                      
+ block3b_se_reshape (Reshape)                    (None, 1, 1, 240)                0                 ['block3b_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block3b_se_reduce (Conv2D)                      (None, 1, 1, 10)                 2410              ['block3b_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block3b_se_expand (Conv2D)                      (None, 1, 1, 240)                2640              ['block3b_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block3b_se_excite (Multiply)                    (None, 28, 28, 240)              0                 ['block3b_activation[0][0]',                      
+                                                                                                     'block3b_se_expand[0][0]']                       
+                                                                                                                                                      
+ block3b_project_conv (Conv2D)                   (None, 28, 28, 40)               9600              ['block3b_se_excite[0][0]']                       
+                                                                                                                                                      
+ block3b_project_bn (BatchNormalization)         (None, 28, 28, 40)               160               ['block3b_project_conv[0][0]']                    
+                                                                                                                                                      
+ block3b_drop (Dropout)                          (None, 28, 28, 40)               0                 ['block3b_project_bn[0][0]']                      
+                                                                                                                                                      
+ block3b_add (Add)                               (None, 28, 28, 40)               0                 ['block3b_drop[0][0]',                            
+                                                                                                     'block3a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block4a_expand_conv (Conv2D)                    (None, 28, 28, 240)              9600              ['block3b_add[0][0]']                             
+                                                                                                                                                      
+ block4a_expand_bn (BatchNormalization)          (None, 28, 28, 240)              960               ['block4a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block4a_expand_activation (Activation)          (None, 28, 28, 240)              0                 ['block4a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block4a_dwconv_pad (ZeroPadding2D)              (None, 29, 29, 240)              0                 ['block4a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block4a_dwconv (DepthwiseConv2D)                (None, 14, 14, 240)              2160              ['block4a_dwconv_pad[0][0]']                      
+                                                                                                                                                      
+ block4a_bn (BatchNormalization)                 (None, 14, 14, 240)              960               ['block4a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block4a_activation (Activation)                 (None, 14, 14, 240)              0                 ['block4a_bn[0][0]']                              
+                                                                                                                                                      
+ block4a_se_squeeze (GlobalAveragePooling2D)     (None, 240)                      0                 ['block4a_activation[0][0]']                      
+                                                                                                                                                      
+ block4a_se_reshape (Reshape)                    (None, 1, 1, 240)                0                 ['block4a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block4a_se_reduce (Conv2D)                      (None, 1, 1, 10)                 2410              ['block4a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block4a_se_expand (Conv2D)                      (None, 1, 1, 240)                2640              ['block4a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block4a_se_excite (Multiply)                    (None, 14, 14, 240)              0                 ['block4a_activation[0][0]',                      
+                                                                                                     'block4a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block4a_project_conv (Conv2D)                   (None, 14, 14, 80)               19200             ['block4a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block4a_project_bn (BatchNormalization)         (None, 14, 14, 80)               320               ['block4a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block4b_expand_conv (Conv2D)                    (None, 14, 14, 480)              38400             ['block4a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block4b_expand_bn (BatchNormalization)          (None, 14, 14, 480)              1920              ['block4b_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block4b_expand_activation (Activation)          (None, 14, 14, 480)              0                 ['block4b_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block4b_dwconv (DepthwiseConv2D)                (None, 14, 14, 480)              4320              ['block4b_expand_activation[0][0]']               
+                                                                                                                                                      
+ block4b_bn (BatchNormalization)                 (None, 14, 14, 480)              1920              ['block4b_dwconv[0][0]']                          
+                                                                                                                                                      
+ block4b_activation (Activation)                 (None, 14, 14, 480)              0                 ['block4b_bn[0][0]']                              
+                                                                                                                                                      
+ block4b_se_squeeze (GlobalAveragePooling2D)     (None, 480)                      0                 ['block4b_activation[0][0]']                      
+                                                                                                                                                      
+ block4b_se_reshape (Reshape)                    (None, 1, 1, 480)                0                 ['block4b_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block4b_se_reduce (Conv2D)                      (None, 1, 1, 20)                 9620              ['block4b_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block4b_se_expand (Conv2D)                      (None, 1, 1, 480)                10080             ['block4b_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block4b_se_excite (Multiply)                    (None, 14, 14, 480)              0                 ['block4b_activation[0][0]',                      
+                                                                                                     'block4b_se_expand[0][0]']                       
+                                                                                                                                                      
+ block4b_project_conv (Conv2D)                   (None, 14, 14, 80)               38400             ['block4b_se_excite[0][0]']                       
+                                                                                                                                                      
+ block4b_project_bn (BatchNormalization)         (None, 14, 14, 80)               320               ['block4b_project_conv[0][0]']                    
+                                                                                                                                                      
+ block4b_drop (Dropout)                          (None, 14, 14, 80)               0                 ['block4b_project_bn[0][0]']                      
+                                                                                                                                                      
+ block4b_add (Add)                               (None, 14, 14, 80)               0                 ['block4b_drop[0][0]',                            
+                                                                                                     'block4a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block4c_expand_conv (Conv2D)                    (None, 14, 14, 480)              38400             ['block4b_add[0][0]']                             
+                                                                                                                                                      
+ block4c_expand_bn (BatchNormalization)          (None, 14, 14, 480)              1920              ['block4c_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block4c_expand_activation (Activation)          (None, 14, 14, 480)              0                 ['block4c_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block4c_dwconv (DepthwiseConv2D)                (None, 14, 14, 480)              4320              ['block4c_expand_activation[0][0]']               
+                                                                                                                                                      
+ block4c_bn (BatchNormalization)                 (None, 14, 14, 480)              1920              ['block4c_dwconv[0][0]']                          
+                                                                                                                                                      
+ block4c_activation (Activation)                 (None, 14, 14, 480)              0                 ['block4c_bn[0][0]']                              
+                                                                                                                                                      
+ block4c_se_squeeze (GlobalAveragePooling2D)     (None, 480)                      0                 ['block4c_activation[0][0]']                      
+                                                                                                                                                      
+ block4c_se_reshape (Reshape)                    (None, 1, 1, 480)                0                 ['block4c_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block4c_se_reduce (Conv2D)                      (None, 1, 1, 20)                 9620              ['block4c_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block4c_se_expand (Conv2D)                      (None, 1, 1, 480)                10080             ['block4c_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block4c_se_excite (Multiply)                    (None, 14, 14, 480)              0                 ['block4c_activation[0][0]',                      
+                                                                                                     'block4c_se_expand[0][0]']                       
+                                                                                                                                                      
+ block4c_project_conv (Conv2D)                   (None, 14, 14, 80)               38400             ['block4c_se_excite[0][0]']                       
+                                                                                                                                                      
+ block4c_project_bn (BatchNormalization)         (None, 14, 14, 80)               320               ['block4c_project_conv[0][0]']                    
+                                                                                                                                                      
+ block4c_drop (Dropout)                          (None, 14, 14, 80)               0                 ['block4c_project_bn[0][0]']                      
+                                                                                                                                                      
+ block4c_add (Add)                               (None, 14, 14, 80)               0                 ['block4c_drop[0][0]',                            
+                                                                                                     'block4b_add[0][0]']                             
+                                                                                                                                                      
+ block5a_expand_conv (Conv2D)                    (None, 14, 14, 480)              38400             ['block4c_add[0][0]']                             
+                                                                                                                                                      
+ block5a_expand_bn (BatchNormalization)          (None, 14, 14, 480)              1920              ['block5a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block5a_expand_activation (Activation)          (None, 14, 14, 480)              0                 ['block5a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block5a_dwconv (DepthwiseConv2D)                (None, 14, 14, 480)              12000             ['block5a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block5a_bn (BatchNormalization)                 (None, 14, 14, 480)              1920              ['block5a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block5a_activation (Activation)                 (None, 14, 14, 480)              0                 ['block5a_bn[0][0]']                              
+                                                                                                                                                      
+ block5a_se_squeeze (GlobalAveragePooling2D)     (None, 480)                      0                 ['block5a_activation[0][0]']                      
+                                                                                                                                                      
+ block5a_se_reshape (Reshape)                    (None, 1, 1, 480)                0                 ['block5a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block5a_se_reduce (Conv2D)                      (None, 1, 1, 20)                 9620              ['block5a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block5a_se_expand (Conv2D)                      (None, 1, 1, 480)                10080             ['block5a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block5a_se_excite (Multiply)                    (None, 14, 14, 480)              0                 ['block5a_activation[0][0]',                      
+                                                                                                     'block5a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block5a_project_conv (Conv2D)                   (None, 14, 14, 112)              53760             ['block5a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block5a_project_bn (BatchNormalization)         (None, 14, 14, 112)              448               ['block5a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block5b_expand_conv (Conv2D)                    (None, 14, 14, 672)              75264             ['block5a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block5b_expand_bn (BatchNormalization)          (None, 14, 14, 672)              2688              ['block5b_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block5b_expand_activation (Activation)          (None, 14, 14, 672)              0                 ['block5b_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block5b_dwconv (DepthwiseConv2D)                (None, 14, 14, 672)              16800             ['block5b_expand_activation[0][0]']               
+                                                                                                                                                      
+ block5b_bn (BatchNormalization)                 (None, 14, 14, 672)              2688              ['block5b_dwconv[0][0]']                          
+                                                                                                                                                      
+ block5b_activation (Activation)                 (None, 14, 14, 672)              0                 ['block5b_bn[0][0]']                              
+                                                                                                                                                      
+ block5b_se_squeeze (GlobalAveragePooling2D)     (None, 672)                      0                 ['block5b_activation[0][0]']                      
+                                                                                                                                                      
+ block5b_se_reshape (Reshape)                    (None, 1, 1, 672)                0                 ['block5b_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block5b_se_reduce (Conv2D)                      (None, 1, 1, 28)                 18844             ['block5b_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block5b_se_expand (Conv2D)                      (None, 1, 1, 672)                19488             ['block5b_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block5b_se_excite (Multiply)                    (None, 14, 14, 672)              0                 ['block5b_activation[0][0]',                      
+                                                                                                     'block5b_se_expand[0][0]']                       
+                                                                                                                                                      
+ block5b_project_conv (Conv2D)                   (None, 14, 14, 112)              75264             ['block5b_se_excite[0][0]']                       
+                                                                                                                                                      
+ block5b_project_bn (BatchNormalization)         (None, 14, 14, 112)              448               ['block5b_project_conv[0][0]']                    
+                                                                                                                                                      
+ block5b_drop (Dropout)                          (None, 14, 14, 112)              0                 ['block5b_project_bn[0][0]']                      
+                                                                                                                                                      
+ block5b_add (Add)                               (None, 14, 14, 112)              0                 ['block5b_drop[0][0]',                            
+                                                                                                     'block5a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block5c_expand_conv (Conv2D)                    (None, 14, 14, 672)              75264             ['block5b_add[0][0]']                             
+                                                                                                                                                      
+ block5c_expand_bn (BatchNormalization)          (None, 14, 14, 672)              2688              ['block5c_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block5c_expand_activation (Activation)          (None, 14, 14, 672)              0                 ['block5c_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block5c_dwconv (DepthwiseConv2D)                (None, 14, 14, 672)              16800             ['block5c_expand_activation[0][0]']               
+                                                                                                                                                      
+ block5c_bn (BatchNormalization)                 (None, 14, 14, 672)              2688              ['block5c_dwconv[0][0]']                          
+                                                                                                                                                      
+ block5c_activation (Activation)                 (None, 14, 14, 672)              0                 ['block5c_bn[0][0]']                              
+                                                                                                                                                      
+ block5c_se_squeeze (GlobalAveragePooling2D)     (None, 672)                      0                 ['block5c_activation[0][0]']                      
+                                                                                                                                                      
+ block5c_se_reshape (Reshape)                    (None, 1, 1, 672)                0                 ['block5c_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block5c_se_reduce (Conv2D)                      (None, 1, 1, 28)                 18844             ['block5c_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block5c_se_expand (Conv2D)                      (None, 1, 1, 672)                19488             ['block5c_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block5c_se_excite (Multiply)                    (None, 14, 14, 672)              0                 ['block5c_activation[0][0]',                      
+                                                                                                     'block5c_se_expand[0][0]']                       
+                                                                                                                                                      
+ block5c_project_conv (Conv2D)                   (None, 14, 14, 112)              75264             ['block5c_se_excite[0][0]']                       
+                                                                                                                                                      
+ block5c_project_bn (BatchNormalization)         (None, 14, 14, 112)              448               ['block5c_project_conv[0][0]']                    
+                                                                                                                                                      
+ block5c_drop (Dropout)                          (None, 14, 14, 112)              0                 ['block5c_project_bn[0][0]']                      
+                                                                                                                                                      
+ block5c_add (Add)                               (None, 14, 14, 112)              0                 ['block5c_drop[0][0]',                            
+                                                                                                     'block5b_add[0][0]']                             
+                                                                                                                                                      
+ block6a_expand_conv (Conv2D)                    (None, 14, 14, 672)              75264             ['block5c_add[0][0]']                             
+                                                                                                                                                      
+ block6a_expand_bn (BatchNormalization)          (None, 14, 14, 672)              2688              ['block6a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block6a_expand_activation (Activation)          (None, 14, 14, 672)              0                 ['block6a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block6a_dwconv_pad (ZeroPadding2D)              (None, 17, 17, 672)              0                 ['block6a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block6a_dwconv (DepthwiseConv2D)                (None, 7, 7, 672)                16800             ['block6a_dwconv_pad[0][0]']                      
+                                                                                                                                                      
+ block6a_bn (BatchNormalization)                 (None, 7, 7, 672)                2688              ['block6a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block6a_activation (Activation)                 (None, 7, 7, 672)                0                 ['block6a_bn[0][0]']                              
+                                                                                                                                                      
+ block6a_se_squeeze (GlobalAveragePooling2D)     (None, 672)                      0                 ['block6a_activation[0][0]']                      
+                                                                                                                                                      
+ block6a_se_reshape (Reshape)                    (None, 1, 1, 672)                0                 ['block6a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block6a_se_reduce (Conv2D)                      (None, 1, 1, 28)                 18844             ['block6a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block6a_se_expand (Conv2D)                      (None, 1, 1, 672)                19488             ['block6a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block6a_se_excite (Multiply)                    (None, 7, 7, 672)                0                 ['block6a_activation[0][0]',                      
+                                                                                                     'block6a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block6a_project_conv (Conv2D)                   (None, 7, 7, 192)                129024            ['block6a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block6a_project_bn (BatchNormalization)         (None, 7, 7, 192)                768               ['block6a_project_conv[0][0]']                    
+                                                                                                                                                      
+ block6b_expand_conv (Conv2D)                    (None, 7, 7, 1152)               221184            ['block6a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block6b_expand_bn (BatchNormalization)          (None, 7, 7, 1152)               4608              ['block6b_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block6b_expand_activation (Activation)          (None, 7, 7, 1152)               0                 ['block6b_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block6b_dwconv (DepthwiseConv2D)                (None, 7, 7, 1152)               28800             ['block6b_expand_activation[0][0]']               
+                                                                                                                                                      
+ block6b_bn (BatchNormalization)                 (None, 7, 7, 1152)               4608              ['block6b_dwconv[0][0]']                          
+                                                                                                                                                      
+ block6b_activation (Activation)                 (None, 7, 7, 1152)               0                 ['block6b_bn[0][0]']                              
+                                                                                                                                                      
+ block6b_se_squeeze (GlobalAveragePooling2D)     (None, 1152)                     0                 ['block6b_activation[0][0]']                      
+                                                                                                                                                      
+ block6b_se_reshape (Reshape)                    (None, 1, 1, 1152)               0                 ['block6b_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block6b_se_reduce (Conv2D)                      (None, 1, 1, 48)                 55344             ['block6b_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block6b_se_expand (Conv2D)                      (None, 1, 1, 1152)               56448             ['block6b_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block6b_se_excite (Multiply)                    (None, 7, 7, 1152)               0                 ['block6b_activation[0][0]',                      
+                                                                                                     'block6b_se_expand[0][0]']                       
+                                                                                                                                                      
+ block6b_project_conv (Conv2D)                   (None, 7, 7, 192)                221184            ['block6b_se_excite[0][0]']                       
+                                                                                                                                                      
+ block6b_project_bn (BatchNormalization)         (None, 7, 7, 192)                768               ['block6b_project_conv[0][0]']                    
+                                                                                                                                                      
+ block6b_drop (Dropout)                          (None, 7, 7, 192)                0                 ['block6b_project_bn[0][0]']                      
+                                                                                                                                                      
+ block6b_add (Add)                               (None, 7, 7, 192)                0                 ['block6b_drop[0][0]',                            
+                                                                                                     'block6a_project_bn[0][0]']                      
+                                                                                                                                                      
+ block6c_expand_conv (Conv2D)                    (None, 7, 7, 1152)               221184            ['block6b_add[0][0]']                             
+                                                                                                                                                      
+ block6c_expand_bn (BatchNormalization)          (None, 7, 7, 1152)               4608              ['block6c_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block6c_expand_activation (Activation)          (None, 7, 7, 1152)               0                 ['block6c_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block6c_dwconv (DepthwiseConv2D)                (None, 7, 7, 1152)               28800             ['block6c_expand_activation[0][0]']               
+                                                                                                                                                      
+ block6c_bn (BatchNormalization)                 (None, 7, 7, 1152)               4608              ['block6c_dwconv[0][0]']                          
+                                                                                                                                                      
+ block6c_activation (Activation)                 (None, 7, 7, 1152)               0                 ['block6c_bn[0][0]']                              
+                                                                                                                                                      
+ block6c_se_squeeze (GlobalAveragePooling2D)     (None, 1152)                     0                 ['block6c_activation[0][0]']                      
+                                                                                                                                                      
+ block6c_se_reshape (Reshape)                    (None, 1, 1, 1152)               0                 ['block6c_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block6c_se_reduce (Conv2D)                      (None, 1, 1, 48)                 55344             ['block6c_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block6c_se_expand (Conv2D)                      (None, 1, 1, 1152)               56448             ['block6c_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block6c_se_excite (Multiply)                    (None, 7, 7, 1152)               0                 ['block6c_activation[0][0]',                      
+                                                                                                     'block6c_se_expand[0][0]']                       
+                                                                                                                                                      
+ block6c_project_conv (Conv2D)                   (None, 7, 7, 192)                221184            ['block6c_se_excite[0][0]']                       
+                                                                                                                                                      
+ block6c_project_bn (BatchNormalization)         (None, 7, 7, 192)                768               ['block6c_project_conv[0][0]']                    
+                                                                                                                                                      
+ block6c_drop (Dropout)                          (None, 7, 7, 192)                0                 ['block6c_project_bn[0][0]']                      
+                                                                                                                                                      
+ block6c_add (Add)                               (None, 7, 7, 192)                0                 ['block6c_drop[0][0]',                            
+                                                                                                     'block6b_add[0][0]']                             
+                                                                                                                                                      
+ block6d_expand_conv (Conv2D)                    (None, 7, 7, 1152)               221184            ['block6c_add[0][0]']                             
+                                                                                                                                                      
+ block6d_expand_bn (BatchNormalization)          (None, 7, 7, 1152)               4608              ['block6d_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block6d_expand_activation (Activation)          (None, 7, 7, 1152)               0                 ['block6d_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block6d_dwconv (DepthwiseConv2D)                (None, 7, 7, 1152)               28800             ['block6d_expand_activation[0][0]']               
+                                                                                                                                                      
+ block6d_bn (BatchNormalization)                 (None, 7, 7, 1152)               4608              ['block6d_dwconv[0][0]']                          
+                                                                                                                                                      
+ block6d_activation (Activation)                 (None, 7, 7, 1152)               0                 ['block6d_bn[0][0]']                              
+                                                                                                                                                      
+ block6d_se_squeeze (GlobalAveragePooling2D)     (None, 1152)                     0                 ['block6d_activation[0][0]']                      
+                                                                                                                                                      
+ block6d_se_reshape (Reshape)                    (None, 1, 1, 1152)               0                 ['block6d_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block6d_se_reduce (Conv2D)                      (None, 1, 1, 48)                 55344             ['block6d_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block6d_se_expand (Conv2D)                      (None, 1, 1, 1152)               56448             ['block6d_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block6d_se_excite (Multiply)                    (None, 7, 7, 1152)               0                 ['block6d_activation[0][0]',                      
+                                                                                                     'block6d_se_expand[0][0]']                       
+                                                                                                                                                      
+ block6d_project_conv (Conv2D)                   (None, 7, 7, 192)                221184            ['block6d_se_excite[0][0]']                       
+                                                                                                                                                      
+ block6d_project_bn (BatchNormalization)         (None, 7, 7, 192)                768               ['block6d_project_conv[0][0]']                    
+                                                                                                                                                      
+ block6d_drop (Dropout)                          (None, 7, 7, 192)                0                 ['block6d_project_bn[0][0]']                      
+                                                                                                                                                      
+ block6d_add (Add)                               (None, 7, 7, 192)                0                 ['block6d_drop[0][0]',                            
+                                                                                                     'block6c_add[0][0]']                             
+                                                                                                                                                      
+ block7a_expand_conv (Conv2D)                    (None, 7, 7, 1152)               221184            ['block6d_add[0][0]']                             
+                                                                                                                                                      
+ block7a_expand_bn (BatchNormalization)          (None, 7, 7, 1152)               4608              ['block7a_expand_conv[0][0]']                     
+                                                                                                                                                      
+ block7a_expand_activation (Activation)          (None, 7, 7, 1152)               0                 ['block7a_expand_bn[0][0]']                       
+                                                                                                                                                      
+ block7a_dwconv (DepthwiseConv2D)                (None, 7, 7, 1152)               10368             ['block7a_expand_activation[0][0]']               
+                                                                                                                                                      
+ block7a_bn (BatchNormalization)                 (None, 7, 7, 1152)               4608              ['block7a_dwconv[0][0]']                          
+                                                                                                                                                      
+ block7a_activation (Activation)                 (None, 7, 7, 1152)               0                 ['block7a_bn[0][0]']                              
+                                                                                                                                                      
+ block7a_se_squeeze (GlobalAveragePooling2D)     (None, 1152)                     0                 ['block7a_activation[0][0]']                      
+                                                                                                                                                      
+ block7a_se_reshape (Reshape)                    (None, 1, 1, 1152)               0                 ['block7a_se_squeeze[0][0]']                      
+                                                                                                                                                      
+ block7a_se_reduce (Conv2D)                      (None, 1, 1, 48)                 55344             ['block7a_se_reshape[0][0]']                      
+                                                                                                                                                      
+ block7a_se_expand (Conv2D)                      (None, 1, 1, 1152)               56448             ['block7a_se_reduce[0][0]']                       
+                                                                                                                                                      
+ block7a_se_excite (Multiply)                    (None, 7, 7, 1152)               0                 ['block7a_activation[0][0]',                      
+                                                                                                     'block7a_se_expand[0][0]']                       
+                                                                                                                                                      
+ block7a_project_conv (Conv2D)                   (None, 7, 7, 320)                368640            ['block7a_se_excite[0][0]']                       
+                                                                                                                                                      
+ block7a_project_bn (BatchNormalization)         (None, 7, 7, 320)                1280              ['block7a_project_conv[0][0]']                    
+                                                                                                                                                      
+ top_conv (Conv2D)                               (None, 7, 7, 1280)               409600            ['block7a_project_bn[0][0]']                      
+                                                                                                                                                      
+ top_bn (BatchNormalization)                     (None, 7, 7, 1280)               5120              ['top_conv[0][0]']                                
+                                                                                                                                                      
+ top_activation (Activation)                     (None, 7, 7, 1280)               0                 ['top_bn[0][0]']                                  
+                                                                                                                                                      
+ global_average_pooling2d (GlobalAveragePooling2  (None, 1280)                    0                 ['top_activation[0][0]']                          
+ D)                                                                                                                                                   
+                                                                                                                                                      
+ dense (Dense)                                   (None, 8631)                     11056311          ['global_average_pooling2d[0][0]']                
+                                                                                                                                                      
+======================================================================================================================================================
+Total params: 15,105,882
+Trainable params: 15,063,859
+Non-trainable params: 42,023
+______________________________________________________________________________________________________________________________________________________
+Epoch 1/25
+11046/11046 [==============================] - 4411s 398ms/step - loss: 3.4596 - accuracy: 0.4138 - top-5-accuracy: 0.5808 - top-10-accuracy: 0.6451 - top-100-accuracy: 0.8326 - val_loss: 4.0828 - val_accuracy: 0.2666 - val_top-5-accuracy: 0.4633 - val_top-10-accuracy: 0.5522 - val_top-100-accuracy: 0.8229
+Epoch 2/25
+11046/11046 [==============================] - 4406s 399ms/step - loss: 1.0905 - accuracy: 0.7701 - top-5-accuracy: 0.8922 - top-10-accuracy: 0.9237 - top-100-accuracy: 0.9827 - val_loss: 5.7348 - val_accuracy: 0.1318 - val_top-5-accuracy: 0.2653 - val_top-10-accuracy: 0.3375 - val_top-100-accuracy: 0.6337
+Epoch 3/25
+11046/11046 [==============================] - 4400s 398ms/step - loss: 0.6592 - accuracy: 0.8559 - top-5-accuracy: 0.9405 - top-10-accuracy: 0.9596 - top-100-accuracy: 0.9917 - val_loss: 4.6836 - val_accuracy: 0.2247 - val_top-5-accuracy: 0.4033 - val_top-10-accuracy: 0.4867 - val_top-100-accuracy: 0.7624
+Epoch 4/25
+11046/11046 [==============================] - 4400s 398ms/step - loss: 0.4648 - accuracy: 0.8962 - top-5-accuracy: 0.9612 - top-10-accuracy: 0.9742 - top-100-accuracy: 0.9950 - val_loss: 1.4820 - val_accuracy: 0.6858 - val_top-5-accuracy: 0.8399 - val_top-10-accuracy: 0.8843 - val_top-100-accuracy: 0.9690
+Epoch 5/25
+11046/11046 [==============================] - 4419s 400ms/step - loss: 0.3498 - accuracy: 0.9204 - top-5-accuracy: 0.9726 - top-10-accuracy: 0.9822 - top-100-accuracy: 0.9968 - val_loss: 1.7091 - val_accuracy: 0.6385 - val_top-5-accuracy: 0.8123 - val_top-10-accuracy: 0.8638 - val_top-100-accuracy: 0.9672
+Epoch 6/25
+11046/11046 [==============================] - 4412s 399ms/step - loss: 0.2735 - accuracy: 0.9367 - top-5-accuracy: 0.9800 - top-10-accuracy: 0.9873 - top-100-accuracy: 0.9978 - val_loss: 3.9748 - val_accuracy: 0.3186 - val_top-5-accuracy: 0.5129 - val_top-10-accuracy: 0.5936 - val_top-100-accuracy: 0.8332
+Epoch 7/25
+11046/11046 [==============================] - 4409s 399ms/step - loss: 0.2190 - accuracy: 0.9484 - top-5-accuracy: 0.9850 - top-10-accuracy: 0.9906 - top-100-accuracy: 0.9985 - val_loss: 1.6166 - val_accuracy: 0.6535 - val_top-5-accuracy: 0.8258 - val_top-10-accuracy: 0.8749 - val_top-100-accuracy: 0.9699
+Epoch 8/25
+11046/11046 [==============================] - 4419s 400ms/step - loss: 0.1788 - accuracy: 0.9571 - top-5-accuracy: 0.9886 - top-10-accuracy: 0.9931 - top-100-accuracy: 0.9990 - val_loss: 4.0915 - val_accuracy: 0.3422 - val_top-5-accuracy: 0.5381 - val_top-10-accuracy: 0.6168 - val_top-100-accuracy: 0.8416
+Epoch 9/25
+11046/11046 [==============================] - 4419s 400ms/step - loss: 0.1472 - accuracy: 0.9638 - top-5-accuracy: 0.9913 - top-10-accuracy: 0.9949 - top-100-accuracy: 0.9993 - val_loss: 0.6277 - val_accuracy: 0.8432 - val_top-5-accuracy: 0.9483 - val_top-10-accuracy: 0.9693 - val_top-100-accuracy: 0.9960
+Epoch 10/25
+11046/11046 [==============================] - 4407s 399ms/step - loss: 0.1230 - accuracy: 0.9692 - top-5-accuracy: 0.9933 - top-10-accuracy: 0.9962 - top-100-accuracy: 0.9996 - val_loss: 1.9531 - val_accuracy: 0.6254 - val_top-5-accuracy: 0.8018 - val_top-10-accuracy: 0.8547 - val_top-100-accuracy: 0.9628
+Epoch 11/25
+11046/11046 [==============================] - 4419s 400ms/step - loss: 0.1040 - accuracy: 0.9734 - top-5-accuracy: 0.9948 - top-10-accuracy: 0.9972 - top-100-accuracy: 0.9997 - val_loss: 2.5217 - val_accuracy: 0.5455 - val_top-5-accuracy: 0.7346 - val_top-10-accuracy: 0.7958 - val_top-100-accuracy: 0.9332
+Epoch 12/25
+11046/11046 [==============================] - 4418s 400ms/step - loss: 0.0886 - accuracy: 0.9768 - top-5-accuracy: 0.9960 - top-10-accuracy: 0.9979 - top-100-accuracy: 0.9998 - val_loss: 1.7975 - val_accuracy: 0.6474 - val_top-5-accuracy: 0.8253 - val_top-10-accuracy: 0.8753 - val_top-100-accuracy: 0.9719
+Epoch 13/25
+11046/11046 [==============================] - 4419s 400ms/step - loss: 0.0763 - accuracy: 0.9797 - top-5-accuracy: 0.9969 - top-10-accuracy: 0.9984 - top-100-accuracy: 0.9999 - val_loss: 1.9966 - val_accuracy: 0.6367 - val_top-5-accuracy: 0.8065 - val_top-10-accuracy: 0.8554 - val_top-100-accuracy: 0.9572
+Epoch 14/25
+11046/11046 [==============================] - 4398s 398ms/step - loss: 0.0661 - accuracy: 0.9821 - top-5-accuracy: 0.9976 - top-10-accuracy: 0.9989 - top-100-accuracy: 0.9999 - val_loss: 2.4478 - val_accuracy: 0.5738 - val_top-5-accuracy: 0.7683 - val_top-10-accuracy: 0.8290 - val_top-100-accuracy: 0.9573
+Epoch 15/25
+11046/11046 [==============================] - 4389s 397ms/step - loss: 0.0587 - accuracy: 0.9838 - top-5-accuracy: 0.9980 - top-10-accuracy: 0.9991 - top-100-accuracy: 1.0000 - val_loss: 2.6846 - val_accuracy: 0.5519 - val_top-5-accuracy: 0.7422 - val_top-10-accuracy: 0.8045 - val_top-100-accuracy: 0.9399
+Epoch 16/25
+11046/11046 [==============================] - 4392s 397ms/step - loss: 0.0520 - accuracy: 0.9855 - top-5-accuracy: 0.9985 - top-10-accuracy: 0.9993 - top-100-accuracy: 1.0000 - val_loss: 0.1743 - val_accuracy: 0.9513 - val_top-5-accuracy: 0.9914 - val_top-10-accuracy: 0.9961 - val_top-100-accuracy: 0.9997
+Epoch 17/25
+11046/11046 [==============================] - 4397s 398ms/step - loss: 0.0464 - accuracy: 0.9869 - top-5-accuracy: 0.9988 - top-10-accuracy: 0.9995 - top-100-accuracy: 1.0000 - val_loss: 1.5162 - val_accuracy: 0.7159 - val_top-5-accuracy: 0.8682 - val_top-10-accuracy: 0.9089 - val_top-100-accuracy: 0.9816
+Epoch 18/25
+11046/11046 [==============================] - 4396s 398ms/step - loss: 0.0420 - accuracy: 0.9879 - top-5-accuracy: 0.9990 - top-10-accuracy: 0.9996 - top-100-accuracy: 1.0000 - val_loss: 11.4017 - val_accuracy: 0.0589 - val_top-5-accuracy: 0.1334 - val_top-10-accuracy: 0.1789 - val_top-100-accuracy: 0.4038
+Epoch 19/25
+11046/11046 [==============================] - 4417s 400ms/step - loss: 0.0386 - accuracy: 0.9890 - top-5-accuracy: 0.9991 - top-10-accuracy: 0.9997 - top-100-accuracy: 1.0000 - val_loss: 0.1446 - val_accuracy: 0.9590 - val_top-5-accuracy: 0.9938 - val_top-10-accuracy: 0.9973 - val_top-100-accuracy: 0.9999
+Epoch 20/25
+11046/11046 [==============================] - 4417s 400ms/step - loss: 0.0356 - accuracy: 0.9897 - top-5-accuracy: 0.9993 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 3.9534 - val_accuracy: 0.4661 - val_top-5-accuracy: 0.6598 - val_top-10-accuracy: 0.7291 - val_top-100-accuracy: 0.9039
+Epoch 21/25
+11046/11046 [==============================] - 4423s 400ms/step - loss: 0.0323 - accuracy: 0.9906 - top-5-accuracy: 0.9994 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 3.2001 - val_accuracy: 0.5337 - val_top-5-accuracy: 0.7239 - val_top-10-accuracy: 0.7887 - val_top-100-accuracy: 0.9362
+Epoch 22/25
+11046/11046 [==============================] - 4415s 400ms/step - loss: 0.0301 - accuracy: 0.9912 - top-5-accuracy: 0.9995 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 2.2050 - val_accuracy: 0.6289 - val_top-5-accuracy: 0.8051 - val_top-10-accuracy: 0.8565 - val_top-100-accuracy: 0.9635
+Epoch 23/25
+11046/11046 [==============================] - 4418s 400ms/step - loss: 0.0286 - accuracy: 0.9916 - top-5-accuracy: 0.9995 - top-10-accuracy: 0.9998 - top-100-accuracy: 1.0000 - val_loss: 10.3777 - val_accuracy: 0.1078 - val_top-5-accuracy: 0.1911 - val_top-10-accuracy: 0.2337 - val_top-100-accuracy: 0.4114
+Epoch 24/25
+11046/11046 [==============================] - 4370s 395ms/step - loss: 0.0265 - accuracy: 0.9923 - top-5-accuracy: 0.9996 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000 - val_loss: 0.3571 - val_accuracy: 0.9117 - val_top-5-accuracy: 0.9792 - val_top-10-accuracy: 0.9891 - val_top-100-accuracy: 0.9993
+Epoch 25/25
+11046/11046 [==============================] - 4417s 400ms/step - loss: 0.0249 - accuracy: 0.9927 - top-5-accuracy: 0.9996 - top-10-accuracy: 0.9999 - top-100-accuracy: 1.0000 - val_loss: 4.0115 - val_accuracy: 0.4647 - val_top-5-accuracy: 0.6636 - val_top-10-accuracy: 0.7335 - val_top-100-accuracy: 0.9100
+614/614 [==============================] - 66s 90ms/step - loss: 0.1443 - accuracy: 0.9590 - top-5-accuracy: 0.9942 - top-10-accuracy: 0.9974 - top-100-accuracy: 0.9999
+Accuracy on the test set: 95.9%.
+Top 5 Accuracy on the test set: 99.42%.
+Top 10 Accuracy on the test set: 99.74%.
+Top 100 Accuracy on the test set: 99.99%.
