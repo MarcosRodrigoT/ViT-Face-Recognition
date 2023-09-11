@@ -672,6 +672,7 @@ def roc2f_score(ds_dict, fig_name):
 GTI-FACE DATASET
 """
 
+# TODO: Change directories to be relative to the Project
 """ INDOOR """
 # Not Masked
 GALLERY_I_N = '/mnt/Data/mrt/ICIP DDBB/Indoor/Gallery/Not Masked/'  # './datasets/UPM-GTI-Face/Indoor/Gallery/Not Masked/'
