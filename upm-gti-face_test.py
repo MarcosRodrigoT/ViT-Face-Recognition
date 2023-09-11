@@ -119,11 +119,17 @@ def compute_embeddings(ds_gallery_dict, ds_probe_dict, display=False):
             embeddings_vit = vit_model(img).numpy()
             embeddings_resnet = resnet_model(img).numpy()
             embeddings_vgg = vgg_model(img).numpy()
+            embeddings_inception = inception_model(img).numpy()
+            embeddings_mobilenet = mobilenet_model(img).numpy()
+            embeddings_efficientnet = efficientnet_model(img).numpy()
 
             gallery_dict_aux[person_name] = {'file_name': img_file_path}
             gallery_dict_aux[person_name]['embeddings_vit'] = embeddings_vit
             gallery_dict_aux[person_name]['embeddings_resnet'] = embeddings_resnet
             gallery_dict_aux[person_name]['embeddings_vgg'] = embeddings_vgg
+            gallery_dict_aux[person_name]['embeddings_inception'] = embeddings_inception
+            gallery_dict_aux[person_name]['embeddings_mobilenet'] = embeddings_mobilenet
+            gallery_dict_aux[person_name]['embeddings_efficientnet'] = embeddings_efficientnet
 
         probe_dict_aux = {}
         for person_name, dict_of_distances in ds_probe_dict.items():
@@ -134,11 +140,17 @@ def compute_embeddings(ds_gallery_dict, ds_probe_dict, display=False):
                 embeddings_vit = vit_model(img).numpy()
                 embeddings_resnet = resnet_model(img).numpy()
                 embeddings_vgg = vgg_model(img).numpy()
+                embeddings_inception = inception_model(img).numpy()
+                embeddings_mobilenet = mobilenet_model(img).numpy()
+                embeddings_efficientnet = efficientnet_model(img).numpy()
 
                 probe_dict_aux[person_name][distance] = {'file_name': img_file_path}
                 probe_dict_aux[person_name][distance]['embeddings_vit'] = embeddings_vit
                 probe_dict_aux[person_name][distance]['embeddings_resnet'] = embeddings_resnet
                 probe_dict_aux[person_name][distance]['embeddings_vgg'] = embeddings_vgg
+                probe_dict_aux[person_name][distance]['embeddings_inception'] = embeddings_inception
+                probe_dict_aux[person_name][distance]['embeddings_mobilenet'] = embeddings_mobilenet
+                probe_dict_aux[person_name][distance]['embeddings_efficientnet'] = embeddings_efficientnet
 
         with open(f"./saved_results/Tests/UPM-GTI-Face/embeddings_FC_{CASE_OF_STUDY}.pickle", 'wb') as file:
             pickle.dump([gallery_dict_aux, probe_dict_aux], file)
@@ -151,6 +163,9 @@ def compute_embeddings(ds_gallery_dict, ds_probe_dict, display=False):
             print(f"\t - embeddings_vit: {val['embeddings_vit'].shape}")
             print(f"\t - embeddings_resnet: {val['embeddings_resnet'].shape}")
             print(f"\t - embeddings_vgg: {val['embeddings_vgg'].shape}")
+            print(f"\t - embeddings_inception: {val['embeddings_inception'].shape}")
+            print(f"\t - embeddings_mobilenet: {val['embeddings_mobilenet'].shape}")
+            print(f"\t - embeddings_efficientnet: {val['embeddings_efficientnet'].shape}")
         print('<><><><><><><><><><><><><><><> EMBEDDINGS PROBE <><><><><><><><><><><><><><><>')
         for key, val in probe_dict_aux.items():
             print(f"KEY: {key}")
@@ -160,13 +175,16 @@ def compute_embeddings(ds_gallery_dict, ds_probe_dict, display=False):
                 print(f"\t\t - embeddings_vit: {val[dist]['embeddings_vit'].shape}")
                 print(f"\t\t - embeddings_resnet: {val[dist]['embeddings_resnet'].shape}")
                 print(f"\t\t - embeddings_vgg: {val[dist]['embeddings_vgg'].shape}")
+                print(f"\t\t - embeddings_inception: {val[dist]['embeddings_inception'].shape}")
+                print(f"\t\t - embeddings_mobilenet: {val[dist]['embeddings_mobilenet'].shape}")
+                print(f"\t\t - embeddings_efficientnet: {val[dist]['embeddings_efficientnet'].shape}")
 
     return gallery_dict_aux, probe_dict_aux
 
 
 def create_all_pairs_no_mask(skip_distances):
     try:
-        with open(f"./saved_results/Tests/UPM-GTI-Face/all_pairs_FC_N.pickle", 'rb') as file:
+        with open("./saved_results/Tests/UPM-GTI-Face/all_pairs_FC_N.pickle", 'rb') as file:
             all_pairs_ = pickle.load(file)
     except FileNotFoundError:
         gallery_dict_non_masked = {'FC': {}}
@@ -210,12 +228,67 @@ def create_all_pairs_no_mask(skip_distances):
                 all_probe[person + '_outdoor_' + distance] = {}
                 all_probe[person + '_outdoor_' + distance] = deepcopy(probe_dict_non_masked['FC'][person]['Outdoor'][distance])
 
-        # all_pairs_ = all_gallery.copy()
         all_pairs_ = deepcopy(all_gallery)
         for key in all_pairs_.keys():
             all_pairs_[key].update({'probes': deepcopy(all_probe)})
 
-        with open(f"./saved_results/Tests/UPM-GTI-Face/all_pairs_{'FC'}_N.pickle", 'wb') as file:
+        with open("./saved_results/Tests/UPM-GTI-Face/all_pairs_FC_N.pickle", 'wb') as file:
+            pickle.dump(all_pairs_, file)
+
+    return all_pairs_
+
+
+def create_all_pairs_mask(skip_distances):
+    try:
+        with open("./saved_results/Tests/UPM-GTI-Face/all_pairs_FC_M.pickle", 'rb') as file:
+            all_pairs_ = pickle.load(file)
+    except FileNotFoundError:
+        gallery_dict_non_masked = {'FC': {}}
+        probe_dict_non_masked = {'FC': {}}
+        all_gallery = {}
+        all_probe = {}
+
+        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_I_M.pickle', 'rb') as file:
+            gallery_dict_FC_indoor, probe_dict_FC_indoor = pickle.load(file)
+        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_O_M.pickle', 'rb') as file:
+            gallery_dict_FC_outdoor, probe_dict_FC_outdoor = pickle.load(file)
+
+        for person in gallery_dict_FC_indoor.keys():
+            gallery_dict_non_masked['FC'][person] = {'Indoor': deepcopy(gallery_dict_FC_indoor[person]),
+                                                     'Outdoor': deepcopy(gallery_dict_FC_outdoor[person])}
+
+            probe_dict_non_masked['FC'][person] = {'Indoor': deepcopy(probe_dict_FC_indoor[person]),
+                                                   'Outdoor': deepcopy(probe_dict_FC_outdoor[person])}
+
+        # create dictionary with all gallery items
+        for person in gallery_dict_non_masked['FC'].keys():
+            all_gallery[person + '_indoor'] = {}
+            all_gallery[person + '_indoor'] = deepcopy(gallery_dict_non_masked['FC'][person]['Indoor'])
+
+            all_gallery[person + '_outdoor'] = {}
+            all_gallery[person + '_outdoor'] = deepcopy(gallery_dict_non_masked['FC'][person]['Outdoor'])
+
+        # create dictionary with all probe items
+        for person in probe_dict_non_masked['FC'].keys():
+            for distance in probe_dict_non_masked['FC'][person]['Indoor'].keys():
+                # skip distances
+                if distance in skip_distances:
+                    continue
+                all_probe[person + '_indoor_' + distance] = {}
+                all_probe[person + '_indoor_' + distance] = deepcopy(probe_dict_non_masked['FC'][person]['Indoor'][distance])
+
+            for distance in probe_dict_non_masked['FC'][person]['Outdoor'].keys():
+                # skip distances
+                if distance in skip_distances:
+                    continue
+                all_probe[person + '_outdoor_' + distance] = {}
+                all_probe[person + '_outdoor_' + distance] = deepcopy(probe_dict_non_masked['FC'][person]['Outdoor'][distance])
+
+        all_pairs_ = deepcopy(all_gallery)
+        for key in all_pairs_.keys():
+            all_pairs_[key].update({'probes': deepcopy(all_probe)})
+
+        with open("./saved_results/Tests/UPM-GTI-Face/all_pairs_FC_M.pickle", 'wb') as file:
             pickle.dump(all_pairs_, file)
 
     return all_pairs_
@@ -252,6 +325,18 @@ def compute_scores_and_ground_truths(ds_dict):
                 ds_dict[gallery_person]['embeddings_vgg'],
                 ds_dict[gallery_person]['probes'][probe_person]['embeddings_vgg']
             )
+            score_inception = compute_score_embeddings(
+                ds_dict[gallery_person]['embeddings_inception'],
+                ds_dict[gallery_person]['probes'][probe_person]['embeddings_inception']
+            )
+            score_mobilenet = compute_score_embeddings(
+                ds_dict[gallery_person]['embeddings_mobilenet'],
+                ds_dict[gallery_person]['probes'][probe_person]['embeddings_mobilenet']
+            )
+            score_efficientnet = compute_score_embeddings(
+                ds_dict[gallery_person]['embeddings_efficientnet'],
+                ds_dict[gallery_person]['probes'][probe_person]['embeddings_efficientnet']
+            )
 
             # ground truth equal to 1 if same person, 0 if different
             if gallery_person.split('_')[0] == probe_person.split('_')[0]:
@@ -263,6 +348,9 @@ def compute_scores_and_ground_truths(ds_dict):
             ds_dict[gallery_person]['probes'][probe_person].update({'score_vit': score_vit})
             ds_dict[gallery_person]['probes'][probe_person].update({'score_resnet': score_resnet})
             ds_dict[gallery_person]['probes'][probe_person].update({'score_vgg': score_vgg})
+            ds_dict[gallery_person]['probes'][probe_person].update({'score_inception': score_inception})
+            ds_dict[gallery_person]['probes'][probe_person].update({'score_mobilenet': score_mobilenet})
+            ds_dict[gallery_person]['probes'][probe_person].update({'score_efficientnet': score_efficientnet})
 
     return ds_dict
 
@@ -271,6 +359,9 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     vit_results = []
     resnet_results = []
     vgg_results = []
+    inception_results = []
+    mobilenet_results = []
+    efficientnet_results = []
     gt_results = []
 
     for gallery_person in ds_dict.keys():
@@ -278,6 +369,9 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
             vit_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_vit'])
             resnet_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_resnet'])
             vgg_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_vgg'])
+            inception_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_inception'])
+            mobilenet_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_mobilenet'])
+            efficientnet_results.append(ds_dict[gallery_person]['probes'][probe_person]['score_efficientnet'])
             gt_results.append(ds_dict[gallery_person]['probes'][probe_person]['ground_truth'])
 
     # Figures
@@ -314,6 +408,36 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label='VGG_16 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vgg), '{0:.2f}'.format(auc_vgg)))
     ax.scatter(eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))], color='green', linewidths=8, zorder=10)
 
+    # Inception
+    fpr_inception, tpr_inception, thresholds_inception = roc_curve(gt_results, inception_results, pos_label=positive_label)
+    auc_inception = auc(fpr_inception, tpr_inception)
+    fnr_inception = 1 - tpr_inception
+    eer_inception = fpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
+    eer_inception_threshold = thresholds_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
+
+    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label='Inception_V3 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_inception), '{0:.2f}'.format(auc_inception)))
+    ax.scatter(eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))], color='cyan', linewidths=8, zorder=10)
+
+    # MobileNet
+    fpr_mobilenet, tpr_mobilenet, thresholds_mobilenet = roc_curve(gt_results, mobilenet_results, pos_label=positive_label)
+    auc_mobilenet = auc(fpr_mobilenet, tpr_mobilenet)
+    fnr_mobilenet = 1 - tpr_mobilenet
+    eer_mobilenet = fpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
+    eer_mobilenet_threshold = thresholds_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
+
+    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label='MobileNet_V2 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_mobilenet), '{0:.2f}'.format(auc_mobilenet)))
+    ax.scatter(eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))], color='magenta', linewidths=8, zorder=10)
+
+    # EfficientNet
+    fpr_efficientnet, tpr_efficientnet, thresholds_efficientnet = roc_curve(gt_results, efficientnet_results, pos_label=positive_label)
+    auc_efficientnet = auc(fpr_efficientnet, tpr_efficientnet)
+    fnr_efficientnet = 1 - tpr_efficientnet
+    eer_efficientnet = fpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
+    eer_efficientnet_threshold = thresholds_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
+
+    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label='EfficientNet_B0 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_efficientnet), '{0:.2f}'.format(auc_efficientnet)))
+    ax.scatter(eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))], color='brown', linewidths=8, zorder=10)
+
     # ROC fig params
     ax.set_xlim([0.0, 1.0])
     ax.set_ylim([0.0, 1.05])
@@ -326,10 +450,13 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
 
     plt.savefig(f"./saved_results/Tests/UPM-GTI-Face/{fig_name}.png", bbox_inches='tight')
 
-    results = {'vit': {}, 'resnet': {}, 'vgg': {}, 'gt_results': gt_results}
+    results = {'vit': {}, 'resnet': {}, 'vgg': {}, 'inception': {}, 'mobilenet': {}, 'efficientnet': {}, 'gt_results': gt_results}
     results['vit'].update({'results': vit_results, 'thresholds': thresholds_vit, 'eer_threshold': eer_vit_threshold})
     results['resnet'].update({'results': resnet_results, 'thresholds': thresholds_resnet, 'eer_threshold': eer_resnet_threshold})
     results['vgg'].update({'results': vgg_results, 'thresholds': thresholds_vgg, 'eer_threshold': eer_vgg_threshold})
+    results['inception'].update({'results': inception_results, 'thresholds': thresholds_inception, 'eer_threshold': eer_inception_threshold})
+    results['mobilenet'].update({'results': mobilenet_results, 'thresholds': thresholds_mobilenet, 'eer_threshold': eer_mobilenet_threshold})
+    results['efficientnet'].update({'results': efficientnet_results, 'thresholds': thresholds_efficientnet, 'eer_threshold': eer_efficientnet_threshold})
 
     return results
 
@@ -423,27 +550,93 @@ def roc2f_score(ds_dict, fig_name):
             vgg_tp_eer, vgg_tn_eer, vgg_fp_eer, vgg_fn_eer, vgg_recall_eer, vgg_precision_eer, vgg_fscore_eer = \
                 tp, tn, fp, fn, recall, precision, fscore
 
+    inception_tp = []
+    inception_tn = []
+    inception_fp = []
+    inception_fn = []
+    inception_recall = []
+    inception_precision = []
+    inception_fscore = []
+    for threshold in ds_dict['inception']['thresholds']:
+        scores = np.where(ds_dict['inception']['results'] > threshold, 1, 0)
+        tp, tn, fp, fn, recall, precision, fscore = compute_metrics(scores, ds_dict['gt_results'])
+
+        inception_tp.append(tp)
+        inception_tn.append(tn)
+        inception_fp.append(fp)
+        inception_fn.append(fn)
+        inception_recall.append(recall)
+        inception_precision.append(precision)
+        inception_fscore.append(fscore)
+        if threshold == ds_dict['inception']['eer_threshold']:
+            inception_tp_eer, inception_tn_eer, inception_fp_eer, inception_fn_eer, inception_recall_eer, inception_precision_eer, inception_fscore_eer = \
+                tp, tn, fp, fn, recall, precision, fscore
+
+    mobilenet_tp = []
+    mobilenet_tn = []
+    mobilenet_fp = []
+    mobilenet_fn = []
+    mobilenet_recall = []
+    mobilenet_precision = []
+    mobilenet_fscore = []
+    for threshold in ds_dict['mobilenet']['thresholds']:
+        scores = np.where(ds_dict['mobilenet']['results'] > threshold, 1, 0)
+        tp, tn, fp, fn, recall, precision, fscore = compute_metrics(scores, ds_dict['gt_results'])
+
+        mobilenet_tp.append(tp)
+        mobilenet_tn.append(tn)
+        mobilenet_fp.append(fp)
+        mobilenet_fn.append(fn)
+        mobilenet_recall.append(recall)
+        mobilenet_precision.append(precision)
+        mobilenet_fscore.append(fscore)
+        if threshold == ds_dict['mobilenet']['eer_threshold']:
+            mobilenet_tp_eer, mobilenet_tn_eer, mobilenet_fp_eer, mobilenet_fn_eer, mobilenet_recall_eer, mobilenet_precision_eer, mobilenet_fscore_eer = \
+                tp, tn, fp, fn, recall, precision, fscore
+
+    efficientnet_tp = []
+    efficientnet_tn = []
+    efficientnet_fp = []
+    efficientnet_fn = []
+    efficientnet_recall = []
+    efficientnet_precision = []
+    efficientnet_fscore = []
+    for threshold in ds_dict['efficientnet']['thresholds']:
+        scores = np.where(ds_dict['efficientnet']['results'] > threshold, 1, 0)
+        tp, tn, fp, fn, recall, precision, fscore = compute_metrics(scores, ds_dict['gt_results'])
+
+        efficientnet_tp.append(tp)
+        efficientnet_tn.append(tn)
+        efficientnet_fp.append(fp)
+        efficientnet_fn.append(fn)
+        efficientnet_recall.append(recall)
+        efficientnet_precision.append(precision)
+        efficientnet_fscore.append(fscore)
+        if threshold == ds_dict['efficientnet']['eer_threshold']:
+            efficientnet_tp_eer, efficientnet_tn_eer, efficientnet_fp_eer, efficientnet_fn_eer, efficientnet_recall_eer, efficientnet_precision_eer, efficientnet_fscore_eer = \
+                tp, tn, fp, fn, recall, precision, fscore
+
     f_scores = ['F-SCORE', 'F-score',
-                vit_fscore, resnet_fscore, vgg_fscore,
-                vit_fscore_eer, resnet_fscore_eer, vgg_fscore_eer]
+                vit_fscore, resnet_fscore, vgg_fscore, inception_fscore, mobilenet_fscore, efficientnet_fscore,
+                vit_fscore_eer, resnet_fscore_eer, vgg_fscore_eer, inception_fscore_eer, mobilenet_fscore_eer, efficientnet_fscore_eer]
     precisions = ['PRECISION', 'Precision',
-                vit_precision, resnet_precision, vgg_precision,
-                vit_precision_eer, resnet_precision_eer, vgg_precision_eer]
+                  vit_precision, resnet_precision, vgg_precision, inception_precision, mobilenet_precision, efficientnet_precision,
+                  vit_precision_eer, resnet_precision_eer, vgg_precision_eer, inception_precision_eer, mobilenet_precision_eer, efficientnet_precision_eer]
     recalls = ['RECALL', 'Recall',
-                vit_recall, resnet_recall, vgg_recall,
-                vit_recall_eer, resnet_recall_eer, vgg_recall_eer]
+               vit_recall, resnet_recall, vgg_recall, inception_recall, mobilenet_recall, efficientnet_recall,
+               vit_recall_eer, resnet_recall_eer, vgg_recall_eer, inception_recall_eer, mobilenet_recall_eer, efficientnet_recall_eer]
     fns = ['FALSE_NEGATIVES', 'False negatives',
-           vit_fn, resnet_fn, vgg_fn,
-           vit_fn_eer, resnet_fn_eer, vgg_fn_eer]
+           vit_fn, resnet_fn, vgg_fn, inception_fn, mobilenet_fn, efficientnet_fn,
+           vit_fn_eer, resnet_fn_eer, vgg_fn_eer, inception_fn_eer, mobilenet_fn_eer, efficientnet_fn_eer]
     fps = ['FALSE_POSITIVES', 'False positives',
-           vit_fp, resnet_fp, vgg_fp,
-           vit_fp_eer, resnet_fp_eer, vgg_fp_eer]
+           vit_fp, resnet_fp, vgg_fp, inception_fp, mobilenet_fp, efficientnet_fp,
+           vit_fp_eer, resnet_fp_eer, vgg_fp_eer, inception_fp_eer, mobilenet_fp_eer, efficientnet_fp_eer]
     tns = ['TRUE_NEGATIVES', 'True negatives',
-           vit_tn, resnet_tn, vgg_tn,
-           vit_tn_eer, resnet_tn_eer, vgg_tn_eer]
+           vit_tn, resnet_tn, vgg_tn, inception_tn, mobilenet_tn, efficientnet_tn,
+           vit_tn_eer, resnet_tn_eer, vgg_tn_eer, inception_tn_eer, mobilenet_tn_eer, efficientnet_tn_eer]
     tps = ['TRUE_POSITIVES', 'True positives',
-           vit_tp, resnet_tp, vgg_tp,
-           vit_tp_eer, resnet_tp_eer, vgg_tp_eer]
+           vit_tp, resnet_tp, vgg_tp, inception_tp, mobilenet_tp, efficientnet_tp,
+           vit_tp_eer, resnet_tp_eer, vgg_tp_eer, inception_tp_eer, mobilenet_tp_eer, efficientnet_tp_eer]
 
     all_metrics = [f_scores, precisions, recalls, fns, fps, tns, tps]
     for metric in all_metrics:
@@ -451,12 +644,19 @@ def roc2f_score(ds_dict, fig_name):
         fig, ax = plt.subplots(1, 1, figsize=(10, 9))
         lw = 3
 
-        ax.plot(ds_dict['vit']['thresholds'], metric[2], linestyle='-', lw=lw, color='blue', label=f"ViT_B32")
-        ax.scatter(ds_dict['vit']['eer_threshold'], metric[5], color='blue', linewidths=8, zorder=10)
-        ax.plot(ds_dict['resnet']['thresholds'], metric[3], linestyle='-', lw=lw, color='orange', label=f"ResNet_50")
-        ax.scatter(ds_dict['resnet']['eer_threshold'], metric[6], color='orange', linewidths=8, zorder=10)
-        ax.plot(ds_dict['vgg']['thresholds'], metric[4], linestyle='-', lw=lw, color='green', label=f"VGG_16")
-        ax.scatter(ds_dict['vgg']['eer_threshold'], metric[7], color='green', linewidths=8, zorder=10)
+        ax.plot(ds_dict['vit']['thresholds'], metric[2], linestyle='-', lw=lw, color='blue', label="ViT_B32")
+        ax.scatter(ds_dict['vit']['eer_threshold'], metric[8], color='blue', linewidths=8, zorder=10)
+        ax.plot(ds_dict['resnet']['thresholds'], metric[3], linestyle='-', lw=lw, color='orange', label="ResNet_50")
+        ax.scatter(ds_dict['resnet']['eer_threshold'], metric[9], color='orange', linewidths=8, zorder=10)
+        ax.plot(ds_dict['vgg']['thresholds'], metric[4], linestyle='-', lw=lw, color='green', label="VGG_16")
+        ax.scatter(ds_dict['vgg']['eer_threshold'], metric[10], color='green', linewidths=8, zorder=10)
+
+        ax.plot(ds_dict['inception']['thresholds'], metric[5], linestyle='-', lw=lw, color='cyan', label="Inception_V3")
+        ax.scatter(ds_dict['inception']['eer_threshold'], metric[11], color='cyan', linewidths=8, zorder=10)
+        ax.plot(ds_dict['mobilenet']['thresholds'], metric[6], linestyle='-', lw=lw, color='purple', label="MobileNet_V2")
+        ax.scatter(ds_dict['mobilenet']['eer_threshold'], metric[12], color='purple', linewidths=8, zorder=10)
+        ax.plot(ds_dict['efficientnet']['thresholds'], metric[7], linestyle='-', lw=lw, color='brown', label="EfficientNet_B0")
+        ax.scatter(ds_dict['efficientnet']['eer_threshold'], metric[13], color='brown', linewidths=8, zorder=10)
 
         ax.set_title(metric[0], fontsize=15)
         ax.set_xlabel('Thresholds', fontsize=15)
@@ -474,25 +674,25 @@ GTI-FACE DATASET
 
 """ INDOOR """
 # Not Masked
-GALLERY_I_N = './datasets/UPM-GTI-Face/Indoor/Gallery/Not Masked/'
-PROBE_I_N = './datasets/UPM-GTI-Face/Indoor/Camera/Not Masked/Frames/Curated/'
+GALLERY_I_N = '/mnt/Data/mrt/ICIP DDBB/Indoor/Gallery/Not Masked/'  # './datasets/UPM-GTI-Face/Indoor/Gallery/Not Masked/'
+PROBE_I_N = '/mnt/Data/mrt/ICIP DDBB/Indoor/Camera/Not Masked/Frames/Curated/'  # './datasets/UPM-GTI-Face/Indoor/Camera/Not Masked/Frames/Curated/'
 GALLERY_SUBJECTS_I_N = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_I_N = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos_2', 'Narciso', 'Pablo']
 # Masked
-GALLERY_I_M = './datasets/UPM-GTI-Face/Indoor/Gallery/Masked/'
-PROBE_I_M = './datasets/UPM-GTI-Face/Indoor/Camera/Masked/Frames/Curated/'
+GALLERY_I_M = '/mnt/Data/mrt/ICIP DDBB/Indoor/Gallery/Masked/'  # './datasets/UPM-GTI-Face/Indoor/Gallery/Masked/'
+PROBE_I_M = '/mnt/Data/mrt/ICIP DDBB/Indoor/Camera/Masked/Frames/Curated/'  # './datasets/UPM-GTI-Face/Indoor/Camera/Masked/Frames/Curated/'
 GALLERY_SUBJECTS_I_M = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_I_M = ['Andres', 'Cristina', 'DaniB', 'DaniF', 'Diego', 'Ester', 'German', 'Isa', 'Marcos_2', 'Narciso', 'Pablo']
 
 """ OUTDOOR """
 # Not Masked
-GALLERY_O_N = './datasets/UPM-GTI-Face/Outdoor/Gallery/Not Masked/'
-PROBE_O_N = './datasets/UPM-GTI-Face/Outdoor/Camera/Not Masked/Frames/Curated/'
+GALLERY_O_N = '/mnt/Data/mrt/ICIP DDBB/Outdoor/Gallery/Not Masked/'  # './datasets/UPM-GTI-Face/Outdoor/Gallery/Not Masked/'
+PROBE_O_N = '/mnt/Data/mrt/ICIP DDBB/Outdoor/Camera/Not Masked/Frames/Curated/'  # './datasets/UPM-GTI-Face/Outdoor/Camera/Not Masked/Frames/Curated/'
 GALLERY_SUBJECTS_O_N = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_O_N = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 # Masked
-GALLERY_O_M = './datasets/UPM-GTI-Face/Outdoor/Gallery/Masked/'
-PROBE_O_M = './datasets/UPM-GTI-Face/Outdoor/Camera/Masked/Frames/Curated/'
+GALLERY_O_M = '/mnt/Data/mrt/ICIP DDBB/Outdoor/Gallery/Masked/'  # './datasets/UPM-GTI-Face/Outdoor/Gallery/Masked/'
+PROBE_O_M = '/mnt/Data/mrt/ICIP DDBB/Outdoor/Camera/Masked/Frames/Curated/'  # './datasets/UPM-GTI-Face/Outdoor/Camera/Masked/Frames/Curated/'
 GALLERY_SUBJECTS_O_M = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 PROBE_SUBJECTS_O_M = ['Andres', 'Cristina', 'DaniB', 'DaniF_2', 'Diego', 'Ester', 'German', 'Isa_2', 'Marcos', 'Narciso', 'Pablo']
 
@@ -582,6 +782,54 @@ vgg_model.load_weights("./saved_results/Models/VGG_16/checkpoint").expect_partia
 vgg_model = tf.keras.models.Model(inputs=vgg_model.input, outputs=vgg_model.layers[-2].output)
 vgg_model.summary()
 
+""" Inception_v3 """
+inception_model = tf.keras.applications.InceptionV3(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(inception_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+inception_model = tf.keras.models.Model(inputs=inception_model.input, outputs=Y, name='InceptionV3')
+inception_model.summary()
+
+inception_model.load_weights("./saved_results/Models/Inception_V3/checkpoint").expect_partial()   # suppresses warnings
+inception_model = tf.keras.models.Model(inputs=inception_model.input, outputs=inception_model.layers[-2].output)
+inception_model.summary()
+
+""" MobileNet_v2 """
+mobilenet_model = tf.keras.applications.MobileNetV2(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(mobilenet_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+mobilenet_model = tf.keras.models.Model(inputs=mobilenet_model.input, outputs=Y, name='MobileNetV2')
+mobilenet_model.summary()
+
+mobilenet_model.load_weights("./saved_results/Models/MobileNet_V2/checkpoint").expect_partial()   # suppresses warnings
+mobilenet_model = tf.keras.models.Model(inputs=mobilenet_model.input, outputs=mobilenet_model.layers[-2].output)
+mobilenet_model.summary()
+
+""" EfficientNet_B0 """
+efficientnet_model = tf.keras.applications.EfficientNetB0(
+    include_top=False,
+    weights="imagenet",
+    input_shape=(image_size, image_size, 3),
+    pooling=None,
+)
+Y = tf.keras.layers.GlobalAvgPool2D()(efficientnet_model.output)
+Y = tf.keras.layers.Dense(units=num_classes, activation='softmax', kernel_initializer=tf.keras.initializers.GlorotUniform())(Y)
+efficientnet_model = tf.keras.models.Model(inputs=efficientnet_model.input, outputs=Y, name='EfficientNetB0')
+efficientnet_model.summary()
+
+efficientnet_model.load_weights("./saved_results/Models/EfficientNet_B0/checkpoint").expect_partial()   # suppresses warnings
+efficientnet_model = tf.keras.models.Model(inputs=efficientnet_model.input, outputs=efficientnet_model.layers[-2].output)
+efficientnet_model.summary()
+
 
 """
 COMPUTE EMBEDDINGS (ONLY NEED TO EXECUTE THIS ONCE FOR EVERY SCENARIO IN UPM-GTI-FACE DATASET)
@@ -601,8 +849,9 @@ GET DICTIONARY WITH ALL POSSIBLE PAIRS (WITHOUT MASK)
 #   - Number of comparisons: 22 * 220 = 4.840
 
 # distances =       ['1', '3', '6', '9', '12', '15', '18', '21', '24', '27', '30']
-distances_to_skip = ['1']
-all_pairs_FC = create_all_pairs_no_mask(skip_distances=distances_to_skip)
+distances_to_skip = ['1', '3', '6', '9', '12', '15', '18', '21', '24', '27']
+# all_pairs_FC = create_all_pairs_no_mask(skip_distances=distances_to_skip)
+all_pairs_FC = create_all_pairs_mask(skip_distances=distances_to_skip)
 
 """
 COMPUTE SCORES AND GROUND TRUTHS
