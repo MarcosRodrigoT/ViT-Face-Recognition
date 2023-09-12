@@ -1,37 +1,38 @@
 import os
+import matplotlib.pyplot as plt
 
 
 def remove_empty_directories():
-    neutral_items = os.listdir(neutral_dir)
-    masked_items = os.listdir(masked_dir)
-    sunglasses_items = os.listdir(sunglasses_dir)
+    neutral_items = os.listdir(NEUTRAL_DIR)
+    masked_items = os.listdir(MASKED_DIR)
+    sunglasses_items = os.listdir(SUNGLASSES_DIR)
 
     for item in masked_items:
-        if not os.listdir(f"{masked_dir}/{item}"):
+        if not os.listdir(f"{MASKED_DIR}/{item}"):
             print(f'Masked folder ->\t{item} has no images, removing directory')
-            os.rmdir(f'{masked_dir}/{item}')
+            os.rmdir(f'{MASKED_DIR}/{item}')
     for item in neutral_items:
-        if not os.listdir(f"{neutral_dir}/{item}"):
+        if not os.listdir(f"{NEUTRAL_DIR}/{item}"):
             print(f'Neutral folder ->\t{item} has no images, removing directory')
-            os.rmdir(f'{neutral_dir}/{item}')
+            os.rmdir(f'{NEUTRAL_DIR}/{item}')
     for item in sunglasses_items:
-        if not os.listdir(f"{sunglasses_dir}/{item}"):
+        if not os.listdir(f"{SUNGLASSES_DIR}/{item}"):
             print(f'Sunglasses folder ->\t{item} has no images, removing directory')
-            os.rmdir(f'{sunglasses_dir}/{item}')
+            os.rmdir(f'{SUNGLASSES_DIR}/{item}')
 
 def get_unique_names():
-    neutral_items = os.listdir(neutral_dir)
-    masked_items = list(map(lambda x: x.split('_wearing_mask')[0], os.listdir(masked_dir)))
-    sunglasses_items = list(map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(sunglasses_dir)))
+    neutral_items = os.listdir(NEUTRAL_DIR)
+    masked_items = list(map(lambda x: x.split('_wearing_mask')[0], os.listdir(MASKED_DIR)))
+    sunglasses_items = list(map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(SUNGLASSES_DIR)))
     return sorted(
         set(masked_items + neutral_items + sunglasses_items)
     )
 
 
-base_dir = '/mnt/Data/mrt/RealWorldOccludedFaces/images'
-masked_dir = f"{base_dir}/masked"
-neutral_dir = f"{base_dir}/neutral"
-sunglasses_dir = f"{base_dir}/sunglasses"
+BASE_DIR = '/mnt/Data/mrt/RealWorldOccludedFaces/images'
+MASKED_DIR = f"{BASE_DIR}/masked"
+NEUTRAL_DIR = f"{BASE_DIR}/neutral"
+SUNGLASSES_DIR = f"{BASE_DIR}/sunglasses"
 
 remove_empty_directories()
 
