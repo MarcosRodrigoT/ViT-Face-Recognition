@@ -22,11 +22,13 @@ def remove_empty_directories():
 
 def get_unique_names():
     neutral_items = os.listdir(NEUTRAL_DIR)
-    masked_items = list(map(lambda x: x.split('_wearing_mask')[0], os.listdir(MASKED_DIR)))
-    sunglasses_items = list(map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(SUNGLASSES_DIR)))
-    return sorted(
-        set(masked_items + neutral_items + sunglasses_items)
+    masked_items = list(
+        map(lambda x: x.split('_wearing_mask')[0], os.listdir(MASKED_DIR))
     )
+    sunglasses_items = list(
+        map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(SUNGLASSES_DIR))
+    )
+    return sorted(set(masked_items + neutral_items + sunglasses_items))
 
 
 BASE_DIR = '/mnt/Data/mrt/RealWorldOccludedFaces/images'
