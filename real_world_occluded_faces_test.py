@@ -47,6 +47,14 @@ def get_histogram():
     for item in sunglasses_items:
         name = item.split('_wearing_sunglasses')[0]
         data[name]['Sunglasses'] = len(os.listdir(f"{SUNGLASSES_DIR}/{item}"))
+
+    # Remove any person which does not have images for all categories
+    data_aux = data.copy()
+    for name in data.keys():
+        if any(val is None for val in data[name].values()):
+            data_aux.pop(name)
+    data = data_aux.copy()
+
     return data
 
 
