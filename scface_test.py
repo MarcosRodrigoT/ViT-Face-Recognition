@@ -36,29 +36,28 @@ for file in sorted(os.listdir(MUGSHOT_DIR)):
         }
     }
 
-surveillance_data = {}
-for person in mugshot_data.keys():
-    surveillance_data[person] = {
-        'files': [],
+surveillance_data = {person: {} for person in mugshot_data.keys()}
+for file in sorted(os.listdir(SURVEILLANCE_DIR)):
+    components = file.split('.')[0].split('_')
+    if len(components) == 3:
+        person, camera, distance = components
+    else:
+        person, camera, distance = components + [None]
+    file_path = os.path.join(SURVEILLANCE_DIR, file)
+
+    surveillance_data[person][file] = {
+        'file': file_path,
+        'camera': camera,
+        'distance': distance,
         'embeddings': {
-            'vit': [],
-            'resnet': [],
-            'vgg': [],
-            'inception': [],
-            'mobilenet': [],
-            'efficientnet': [],
+            'vit': None,
+            'resnet': None,
+            'vgg': None,
+            'inception': None,
+            'mobilenet': None,
+            'efficientnet': None,
         }
     }
-for file in sorted(os.listdir(SURVEILLANCE_DIR)):
-    person = file.split('_')[0]
-    file_path = os.path.join(SURVEILLANCE_DIR, file)
-    surveillance_data[person]['files'].append(file_path)
-    surveillance_data[person]['embeddings']['vit'].append(None)
-    surveillance_data[person]['embeddings']['resnet'].append(None)
-    surveillance_data[person]['embeddings']['vgg'].append(None)
-    surveillance_data[person]['embeddings']['inception'].append(None)
-    surveillance_data[person]['embeddings']['mobilenet'].append(None)
-    surveillance_data[person]['embeddings']['efficientnet'].append(None)
 
 
 """
