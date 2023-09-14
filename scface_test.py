@@ -220,18 +220,44 @@ except FileNotFoundError:
 MATCH MUGSHOT AND SURVEILLANCE IMAGES TO OBTAIN MATCHING SCORES
 """
 
+try:
+    with open('./saved_results/Tests/SCface/scores.pickle', 'rb') as scores_file:
+        scores = pickle.load(scores_file)
+except FileNotFoundError:
+    scores = {person: {} for person in mugshot_data.keys()}
+    for mug_person in mugshot_data.keys():
+        for sur_person in surveillance_data.keys():
+            for file in surveillance_data[sur_person].keys():
+                scores[mug_person][file.split('.jpg')[0]] = {
+                    'person': file.split('_')[0],
+                    'camera': surveillance_data[sur_person][file]['camera'],
+                    'distance': surveillance_data[sur_person][file]['distance'],
+                    'vit': compute_score(
+                        mugshot_data[mug_person]['embeddings']['vit'],
+                        surveillance_data[sur_person][file]['embeddings']['vit']
+                    ),
+                    'resnet': compute_score(
+                        mugshot_data[mug_person]['embeddings']['resnet'],
+                        surveillance_data[sur_person][file]['embeddings']['resnet']
+                    ),
+                    'vgg': compute_score(
+                        mugshot_data[mug_person]['embeddings']['vgg'],
+                        surveillance_data[sur_person][file]['embeddings']['vgg']
+                    ),
+                    'inception': compute_score(
+                        mugshot_data[mug_person]['embeddings']['inception'],
+                        surveillance_data[sur_person][file]['embeddings']['inception']
+                    ),
+                    'mobilenet': compute_score(
+                        mugshot_data[mug_person]['embeddings']['mobilenet'],
+                        surveillance_data[sur_person][file]['embeddings']['mobilenet']
+                    ),
+                    'efficientnet': compute_score(
+                        mugshot_data[mug_person]['embeddings']['efficientnet'],
+                        surveillance_data[sur_person][file]['embeddings']['efficientnet']
+                    ),
+                }
 
-scores = {person: {} for person in mugshot_data.keys()}
-for person in surveillance_data.keys():
-    for file in surveillance_data[person].keys():
-        scores[person][file.split('.jpg')[0]] = {
-            'camera': surveillance_data[person][file]['camera'],
-            'distance': surveillance_data[person][file]['distance'],
-            'vit': None,
-            'resnet': None,
-            'vgg': None,
-            'inception': None,
-            'mobilenet': None,
-            'efficientnet': None,
-        }
+    with open('./saved_results/Tests/SCface/scores.pickle', 'wb') as scores_file:
+        pickle.dump(scores, scores_file)
 
