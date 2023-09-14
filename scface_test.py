@@ -2,6 +2,7 @@ import os
 import pickle
 import tensorflow as tf
 from vit_keras import vit
+from scipy.spatial.distance import cosine
 
 
 def preprocess_image(img_path):
@@ -11,6 +12,12 @@ def preprocess_image(img_path):
     img_ = tf.image.resize(img_, [224, 224])
     img_ = tf.expand_dims(img_, axis=0)
     return img_
+
+
+def compute_score(embeddings1, embeddings2):
+    cosine_distance = cosine(embeddings1, embeddings2)
+    score = 1 - cosine_distance
+    return score
 
 
 """
@@ -207,3 +214,24 @@ except FileNotFoundError:
     with open('./saved_results/Tests/SCface/embeddings.pickle', 'wb') as file:
         data = (mugshot_data, surveillance_data)
         pickle.dump(data, file)
+
+
+"""
+MATCH MUGSHOT AND SURVEILLANCE IMAGES TO OBTAIN MATCHING SCORES
+"""
+
+
+scores = {person: {} for person in mugshot_data.keys()}
+for person in surveillance_data.keys():
+    for file in surveillance_data[person].keys():
+        scores[person][file.split('.jpg')[0]] = {
+            'camera': surveillance_data[person][file]['camera'],
+            'distance': surveillance_data[person][file]['distance'],
+            'vit': None,
+            'resnet': None,
+            'vgg': None,
+            'inception': None,
+            'mobilenet': None,
+            'efficientnet': None,
+        }
+
