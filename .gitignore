@@ -20,3 +20,8 @@ saved_results/Tests/UPM-GTI-Face/Mask/*
 saved_results/Tests/UPM-GTI-Face/No Mask/*
 !saved_results/Tests/UPM-GTI-Face/No Mask/AUC Curves.xlsx
 !saved_results/Tests/UPM-GTI-Face/No Mask/AUC paper.png
+
+saved_results/Tests/RealWorldOccludedFaces/*
+!saved_results/Tests/RealWorldOccludedFaces/Histogram.png
+
+saved_results/Tests/SCface/*
