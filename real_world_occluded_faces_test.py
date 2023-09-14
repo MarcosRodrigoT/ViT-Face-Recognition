@@ -52,6 +52,17 @@ def get_histogram():
     for name in data.keys():
         if any(val is None for val in data[name].values()):
             data_aux.pop(name)
+
+            # Also remove directories
+            try:
+                os.system(f'rm -r {NEUTRAL_DIR}/{name}')
+            except FileNotFoundError: pass
+            try:
+                os.system(f'rm -r {MASKED_DIR}/{name}_wearing_mask')
+            except FileNotFoundError: pass
+            try:
+                os.system(f'rm -r {SUNGLASSES_DIR}/{name}_wearing_sunglasses')
+            except FileNotFoundError: pass
     data = data_aux.copy()
 
     return data
