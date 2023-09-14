@@ -1,5 +1,4 @@
 import os
-import matplotlib.pyplot as plt
 
 
 def remove_empty_directories():
