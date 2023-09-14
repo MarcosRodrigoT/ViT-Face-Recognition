@@ -42,7 +42,7 @@ for file in sorted(os.listdir(SURVEILLANCE_DIR)):
     if len(components) == 3:
         person, camera, distance = components
     else:
-        person, camera, distance = components + [None]
+        person, camera, distance = components + ['None']
     file_path = os.path.join(SURVEILLANCE_DIR, file)
 
     surveillance_data[person][file] = {
