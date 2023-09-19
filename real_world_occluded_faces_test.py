@@ -19,6 +19,7 @@ def remove_empty_directories():
             print(f'Sunglasses folder ->\t{item} has no images, removing directory')
             os.rmdir(f'{SUNGLASSES_DIR}/{item}')
 
+
 def get_unique_names():
     neutral_items = os.listdir(NEUTRAL_DIR)
     masked_items = list(
