@@ -34,19 +34,19 @@ def get_unique_names():
 def get_histogram():
     data = {key: {'Neutral': None, 'Masked': None, 'Sunglasses': None} for key in UNIQUE_NAMES}
 
-    neutral_items = os.listdir(NEUTRAL_DIR)
-    masked_items = os.listdir(MASKED_DIR)
-    sunglasses_items = os.listdir(SUNGLASSES_DIR)
+    neutral_folders = os.listdir(NEUTRAL_DIR)
+    masked_folders = os.listdir(MASKED_DIR)
+    sunglasses_folders = os.listdir(SUNGLASSES_DIR)
 
-    for item in neutral_items:
-        name = item
-        data[name]['Neutral'] = len(os.listdir(f"{NEUTRAL_DIR}/{item}"))
-    for item in masked_items:
-        name = item.split('_wearing_mask')[0]
-        data[name]['Masked'] = len(os.listdir(f"{MASKED_DIR}/{item}"))
-    for item in sunglasses_items:
-        name = item.split('_wearing_sunglasses')[0]
-        data[name]['Sunglasses'] = len(os.listdir(f"{SUNGLASSES_DIR}/{item}"))
+    for folder in neutral_folders:
+        name = folder
+        data[name]['Neutral'] = len(os.listdir(f"{NEUTRAL_DIR}/{folder}"))
+    for folder in masked_folders:
+        name = folder.split('_wearing_mask')[0]
+        data[name]['Masked'] = len(os.listdir(f"{MASKED_DIR}/{folder}"))
+    for folder in sunglasses_folders:
+        name = folder.split('_wearing_sunglasses')[0]
+        data[name]['Sunglasses'] = len(os.listdir(f"{SUNGLASSES_DIR}/{folder}"))
 
     # Remove any person which does not have images for all categories
     data_aux = data.copy()
@@ -65,8 +65,64 @@ def get_histogram():
                 os.system(f'rm -r {SUNGLASSES_DIR}/{name}_wearing_sunglasses')
             except FileNotFoundError: pass
     data = data_aux.copy()
-
     return data
+
+
+def get_data():
+    data = {key: {'Neutral': {}, 'Masked': {}, 'Sunglasses': {}} for key in UNIQUE_NAMES}
+
+    neutral_folders = os.listdir(NEUTRAL_DIR)
+    masked_folders = os.listdir(MASKED_DIR)
+    sunglasses_folders = os.listdir(SUNGLASSES_DIR)
+
+    for folder in neutral_folders:
+        for file in sorted(os.listdir(f"{NEUTRAL_DIR}/{folder}")):
+            person_name = folder
+            file_name = file.split('.jpg')[0]
+            data[person_name]['Neutral'][file_name] = {
+                'embeddings': {
+                    'vit': None,
+                    'resnet': None,
+                    'vgg': None,
+                    'inception': None,
+                    'mobilenet': None,
+                    'efficientnet': None,
+                }
+            }
+    for folder in masked_folders:
+        for file in sorted(os.listdir(f"{MASKED_DIR}/{folder}")):
+            person_name = folder.split('_wearing_mask')[0]
+            file_name = file.split('.jpg')[0]
+            data[person_name]['Masked'][file_name] = {
+                'embeddings': {
+                    'vit': None,
+                    'resnet': None,
+                    'vgg': None,
+                    'inception': None,
+                    'mobilenet': None,
+                    'efficientnet': None,
+                }
+            }
+    for folder in sunglasses_folders:
+        for file in sorted(os.listdir(f"{SUNGLASSES_DIR}/{folder}")):
+            person_name = folder.split('_wearing_sunglasses')[0]
+            file_name = file.split('.jpg')[0]
+            data[person_name]['Sunglasses'][file_name] = {
+                'embeddings': {
+                    'vit': None,
+                    'resnet': None,
+                    'vgg': None,
+                    'inception': None,
+                    'mobilenet': None,
+                    'efficientnet': None,
+                }
+            }
+    return data
+
+
+"""
+CREATE DATASET
+"""
 
 
 BASE_DIR = '/mnt/Data/mrt/RealWorldOccludedFaces/images'
@@ -77,5 +133,5 @@ SUNGLASSES_DIR = f"{BASE_DIR}/sunglasses"
 remove_empty_directories()
 
 UNIQUE_NAMES = get_unique_names()
-
 DATA_HISTOGRAM = get_histogram()
+DATA = get_data()
