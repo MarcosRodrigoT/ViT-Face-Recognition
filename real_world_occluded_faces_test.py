@@ -79,7 +79,9 @@ def get_data():
         for file in sorted(os.listdir(f"{NEUTRAL_DIR}/{folder}")):
             person_name = folder
             file_name = file.split('.jpg')[0]
+            file_path = os.path.join(f"{NEUTRAL_DIR}/{folder}/{file}")
             data[person_name]['Neutral'][file_name] = {
+                'file': file_path,
                 'embeddings': {
                     'vit': None,
                     'resnet': None,
@@ -93,7 +95,9 @@ def get_data():
         for file in sorted(os.listdir(f"{MASKED_DIR}/{folder}")):
             person_name = folder.split('_wearing_mask')[0]
             file_name = file.split('.jpg')[0]
+            file_path = os.path.join(f"{MASKED_DIR}/{folder}/{file}")
             data[person_name]['Masked'][file_name] = {
+                'file': file_path,
                 'embeddings': {
                     'vit': None,
                     'resnet': None,
@@ -107,7 +111,9 @@ def get_data():
         for file in sorted(os.listdir(f"{SUNGLASSES_DIR}/{folder}")):
             person_name = folder.split('_wearing_sunglasses')[0]
             file_name = file.split('.jpg')[0]
+            file_path = os.path.join(f"{MASKED_DIR}/{folder}/{file}")
             data[person_name]['Sunglasses'][file_name] = {
+                'file': file_path,
                 'embeddings': {
                     'vit': None,
                     'resnet': None,
