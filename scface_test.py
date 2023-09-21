@@ -110,6 +110,8 @@ def compute_roc(scores_dict, cameras, distances):
 """
 CREATE DATASET
 """
+
+
 BASE_DIR = '/mnt/Data/mrt/SCface_database'
 MUGSHOT_DIR = f'{BASE_DIR}/mugshot_frontal_cropped_all'
 SURVEILLANCE_DIR = f'{BASE_DIR}/surveillance_cameras_all'
@@ -157,6 +159,7 @@ for file in sorted(os.listdir(SURVEILLANCE_DIR)):
 """
 LOAD MODELS
 """
+
 
 IMAGE_SIZE = 224
 NUM_CLASSES = 8631
@@ -307,6 +310,7 @@ except FileNotFoundError:
 MATCH MUGSHOT AND SURVEILLANCE IMAGES TO OBTAIN MATCHING SCORES
 """
 
+
 try:
     with open('./saved_results/Tests/SCface/scores.pickle', 'rb') as scores_file:
         scores = pickle.load(scores_file)
@@ -347,6 +351,7 @@ except FileNotFoundError:
 
     with open('./saved_results/Tests/SCface/scores.pickle', 'wb') as scores_file:
         pickle.dump(scores, scores_file)
+
 
 """
 COMPUTE ROC CURVES
