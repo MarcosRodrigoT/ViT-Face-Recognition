@@ -30,12 +30,8 @@ def remove_empty_directories():
 
 def get_unique_names():
     neutral_items = os.listdir(NEUTRAL_DIR)
-    masked_items = list(
-        map(lambda x: x.split('_wearing_mask')[0], os.listdir(MASKED_DIR))
-    )
-    sunglasses_items = list(
-        map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(SUNGLASSES_DIR))
-    )
+    masked_items = list(map(lambda x: x.split('_wearing_mask')[0], os.listdir(MASKED_DIR)))
+    sunglasses_items = list(map(lambda x: x.split('_wearing_sunglasses')[0], os.listdir(SUNGLASSES_DIR)))
     return sorted(set(masked_items + neutral_items + sunglasses_items))
 
 
@@ -141,6 +137,12 @@ def preprocess_image(img_path):
     img_ = tf.image.resize(img_, [224, 224])
     img_ = tf.expand_dims(img_, axis=0)
     return img_
+
+
+def compute_score(embeddings1, embeddings2):
+    cosine_distance = cosine(embeddings1, embeddings2)
+    score = 1 - cosine_distance
+    return score
 
 
 """
@@ -291,3 +293,97 @@ except FileNotFoundError:
 
     with open('./saved_results/Tests/RealWorldOccludedFaces/embeddings.pickle', 'wb') as embeddings_file:
         pickle.dump(DATA, embeddings_file)
+
+
+"""
+MATCH IMAGES TO OBTAIN MATCHING SCORES
+"""
+
+
+try:
+    with open('./saved_results/Tests/RealWorldOccludedFaces/scores.pickle', 'rb') as scores_file:
+        SCORES = pickle.load(scores_file)
+except FileNotFoundError:
+    SCORES = {person: {} for person in DATA.keys()}
+    compare_with = [
+        'masked',
+        'sunglasses',
+    ]
+
+    for neutral_person in SCORES.keys():
+        for neutral_file in sorted(os.listdir(f'{NEUTRAL_DIR}/{neutral_person}')):
+            neutral_id = f"{neutral_person}_{neutral_file.split('.jpg')[0]}"
+            SCORES[neutral_person][neutral_id] = {}
+
+            if 'masked' in compare_with:
+                for masked_person in sorted(os.listdir(MASKED_DIR)):
+                    for masked_file in sorted(os.listdir(f'{MASKED_DIR}/{masked_person}')):
+                        masked_id = f"{masked_person}_{masked_file.split('.jpg')[0]}"
+
+                        SCORES[neutral_person][neutral_id][masked_id] = {
+                            'person': masked_person.split('_wearing_mask')[0],
+                            'scores': {
+                                'vit': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['vit'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['vit']
+                                ),
+                                'resnet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['resnet'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['resnet']
+                                ),
+                                'vgg': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['vgg'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['vgg']
+                                ),
+                                'inception': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['inception'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['inception']
+                                ),
+                                'mobilenet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['mobilenet'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['mobilenet']
+                                ),
+                                'efficientnet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['efficientnet'],
+                                    DATA[masked_person.split('_wearing_mask')[0]]['Masked'][masked_file.split('.jpg')[0]]['embeddings']['efficientnet']
+                                ),
+                            }
+                        }
+
+            if 'sunglasses' in compare_with:
+                for sunglasses_person in sorted(os.listdir(SUNGLASSES_DIR)):
+                    for sunglasses_file in sorted(os.listdir(f'{SUNGLASSES_DIR}/{sunglasses_person}')):
+                        sunglasses_id = f"{sunglasses_person}_{sunglasses_file.split('.jpg')[0]}"
+
+                        SCORES[neutral_person][neutral_id][sunglasses_id] = {
+                            'person': sunglasses_person.split('_wearing_sunglasses')[0],
+                            'scores': {
+                                'vit': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['vit'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['vit']
+                                ),
+                                'resnet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['resnet'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['resnet']
+                                ),
+                                'vgg': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['vgg'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['vgg']
+                                ),
+                                'inception': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['inception'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['inception']
+                                ),
+                                'mobilenet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['mobilenet'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['mobilenet']
+                                ),
+                                'efficientnet': compute_score(
+                                    DATA[neutral_person]['Neutral'][neutral_file.split('.jpg')[0]]['embeddings']['efficientnet'],
+                                    DATA[sunglasses_person.split('_wearing_sunglasses')[0]]['Sunglasses'][sunglasses_file.split('.jpg')[0]]['embeddings']['efficientnet']
+                                ),
+                            }
+                        }
+
+    with open('./saved_results/Tests/RealWorldOccludedFaces/scores.pickle', 'wb') as scores_file:
+        pickle.dump(SCORES, scores_file)
