@@ -270,36 +270,36 @@ except FileNotFoundError:
         img = preprocess_image(mugshot_data[person]['file'])
 
         embeddings_vit = vit_model(img).numpy()
-        embeddings1_resnet = resnet50_model(img).numpy()
-        embeddings1_vgg16 = vgg16_model(img).numpy()
-        embeddings1_inception = inception_model(img).numpy()
-        embeddings1_mobilenet = mobilenet_model(img).numpy()
-        embeddings1_efficientnet = efficientnetB0_model(img).numpy()
+        embeddings_resnet = resnet50_model(img).numpy()
+        embeddings_vgg16 = vgg16_model(img).numpy()
+        embeddings_inception = inception_model(img).numpy()
+        embeddings_mobilenet = mobilenet_model(img).numpy()
+        embeddings_efficientnet = efficientnetB0_model(img).numpy()
 
         mugshot_data[person]['embeddings']['vit'] = embeddings_vit
-        mugshot_data[person]['embeddings']['resnet'] = embeddings1_resnet
-        mugshot_data[person]['embeddings']['vgg'] = embeddings1_vgg16
-        mugshot_data[person]['embeddings']['inception'] = embeddings1_inception
-        mugshot_data[person]['embeddings']['mobilenet'] = embeddings1_mobilenet
-        mugshot_data[person]['embeddings']['efficientnet'] = embeddings1_efficientnet
+        mugshot_data[person]['embeddings']['resnet'] = embeddings_resnet
+        mugshot_data[person]['embeddings']['vgg'] = embeddings_vgg16
+        mugshot_data[person]['embeddings']['inception'] = embeddings_inception
+        mugshot_data[person]['embeddings']['mobilenet'] = embeddings_mobilenet
+        mugshot_data[person]['embeddings']['efficientnet'] = embeddings_efficientnet
 
     for person in surveillance_data.keys():
         for file in surveillance_data[person].keys():
             img = preprocess_image(surveillance_data[person][file]['file'])
 
             embeddings_vit = vit_model(img).numpy()
-            embeddings1_resnet = resnet50_model(img).numpy()
-            embeddings1_vgg16 = vgg16_model(img).numpy()
-            embeddings1_inception = inception_model(img).numpy()
-            embeddings1_mobilenet = mobilenet_model(img).numpy()
-            embeddings1_efficientnet = efficientnetB0_model(img).numpy()
+            embeddings_resnet = resnet50_model(img).numpy()
+            embeddings_vgg16 = vgg16_model(img).numpy()
+            embeddings_inception = inception_model(img).numpy()
+            embeddings_mobilenet = mobilenet_model(img).numpy()
+            embeddings_efficientnet = efficientnetB0_model(img).numpy()
 
             surveillance_data[person][file]['embeddings']['vit'] = embeddings_vit
-            surveillance_data[person][file]['embeddings']['resnet'] = embeddings1_resnet
-            surveillance_data[person][file]['embeddings']['vgg'] = embeddings1_vgg16
-            surveillance_data[person][file]['embeddings']['inception'] = embeddings1_inception
-            surveillance_data[person][file]['embeddings']['mobilenet'] = embeddings1_mobilenet
-            surveillance_data[person][file]['embeddings']['efficientnet'] = embeddings1_efficientnet
+            surveillance_data[person][file]['embeddings']['resnet'] = embeddings_resnet
+            surveillance_data[person][file]['embeddings']['vgg'] = embeddings_vgg16
+            surveillance_data[person][file]['embeddings']['inception'] = embeddings_inception
+            surveillance_data[person][file]['embeddings']['mobilenet'] = embeddings_mobilenet
+            surveillance_data[person][file]['embeddings']['efficientnet'] = embeddings_efficientnet
 
     with open('./saved_results/Tests/SCface/embeddings.pickle', 'wb') as file:
         data = (mugshot_data, surveillance_data)
