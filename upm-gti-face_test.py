@@ -2,6 +2,7 @@ import os
 import re
 import pickle
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from vit_keras import vit
 from copy import deepcopy
@@ -388,6 +389,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label='ViT_B32 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vit), '{0:.2f}'.format(auc_vit)))
     ax.scatter(eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))], color='blue', linewidths=8, zorder=10)
 
+    vit_pd = pd.DataFrame({'FPR_ViT': fpr_vit, 'TPR_ViT': tpr_vit})
+    vit_pd['EER_ViT'] = pd.DataFrame([eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]])
+    vit_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/ViT_B32_ROC.csv', header=True, index=False)
+
     # ResNet
     fpr_resnet, tpr_resnet, thresholds_resnet = roc_curve(gt_results, resnet_results, pos_label=positive_label)
     auc_resnet = auc(fpr_resnet, tpr_resnet)
@@ -397,6 +402,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
 
     ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label='ResNet_50 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_resnet), '{0:.2f}'.format(auc_resnet)))
     ax.scatter(eer_resnet, tpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))], color='orange', linewidths=8, zorder=10)
+
+    resnet_pd = pd.DataFrame({'FPR_RESNET': fpr_resnet, 'TPR_RESNET': tpr_resnet})
+    resnet_pd['EER_RESNET'] = pd.DataFrame([eer_resnet, tpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]])
+    resnet_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/ResNet_50_ROC.csv', header=True, index=False)
 
     # VGG
     fpr_vgg, tpr_vgg, thresholds_vgg = roc_curve(gt_results, vgg_results, pos_label=positive_label)
@@ -408,6 +417,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label='VGG_16 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vgg), '{0:.2f}'.format(auc_vgg)))
     ax.scatter(eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))], color='green', linewidths=8, zorder=10)
 
+    vgg_pd = pd.DataFrame({'FPR_VGG': fpr_vgg, 'TPR_VGG': tpr_vgg})
+    vgg_pd['EER_VGG'] = pd.DataFrame([eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]])
+    vgg_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/VGG_16_ROC.csv', header=True, index=False)
+
     # Inception
     fpr_inception, tpr_inception, thresholds_inception = roc_curve(gt_results, inception_results, pos_label=positive_label)
     auc_inception = auc(fpr_inception, tpr_inception)
@@ -417,6 +430,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
 
     ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label='Inception_V3 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_inception), '{0:.2f}'.format(auc_inception)))
     ax.scatter(eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))], color='cyan', linewidths=8, zorder=10)
+
+    inception_pd = pd.DataFrame({'FPR_INCEPTION': fpr_inception, 'TPR_INCEPTION': tpr_inception})
+    inception_pd['EER_INCEPTION'] = pd.DataFrame([eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]])
+    inception_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/Inception_V3_ROC.csv', header=True, index=False)
 
     # MobileNet
     fpr_mobilenet, tpr_mobilenet, thresholds_mobilenet = roc_curve(gt_results, mobilenet_results, pos_label=positive_label)
@@ -428,6 +445,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label='MobileNet_V2 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_mobilenet), '{0:.2f}'.format(auc_mobilenet)))
     ax.scatter(eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))], color='magenta', linewidths=8, zorder=10)
 
+    mobilenet_pd = pd.DataFrame({'FPR_MOBILENET': fpr_mobilenet, 'TPR_MOBILENET': tpr_mobilenet})
+    mobilenet_pd['EER_MOBILENET'] = pd.DataFrame([eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]])
+    mobilenet_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/MobileNet_V2_ROC.csv', header=True, index=False)
+
     # EfficientNet
     fpr_efficientnet, tpr_efficientnet, thresholds_efficientnet = roc_curve(gt_results, efficientnet_results, pos_label=positive_label)
     auc_efficientnet = auc(fpr_efficientnet, tpr_efficientnet)
@@ -437,6 +458,10 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
 
     ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label='EfficientNet_B0 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_efficientnet), '{0:.2f}'.format(auc_efficientnet)))
     ax.scatter(eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))], color='brown', linewidths=8, zorder=10)
+
+    efficientnet_pd = pd.DataFrame({'FPR_EFFICIENTNET': fpr_efficientnet, 'TPR_EFFICIENTNET': tpr_efficientnet})
+    efficientnet_pd['EER_EFFICIENTNET'] = pd.DataFrame([eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]])
+    efficientnet_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/EfficientNet_B0_ROC.csv', header=True, index=False)
 
     # ROC fig params
     ax.set_xlim([0.0, 1.0])
