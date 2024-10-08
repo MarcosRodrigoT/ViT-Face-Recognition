@@ -6,7 +6,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from vit_keras import vit
 from scipy.spatial.distance import cosine
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, recall_score, precision_score, f1_score
+from tqdm import tqdm
 
 
 def remove_empty_directories():
@@ -167,8 +168,21 @@ def plot_and_csv(models, ground_truth_, categories, positive_label=1):
         eer = fpr[np.argmin(np.absolute(fnr - fpr))]
         eer_threshold = thresholds[np.argmin(np.absolute(fnr - fpr))]
 
+        # Find the maximum F1 score and corresponding threshold
+        max_f1 = 0
+        max_f1_recall = 0
+        max_f1_precision = 0
+
+        for thresh in tqdm(thresholds, desc="Processing thresholds"):
+            binarized_results = [1 if score >= thresh else 0 for score in model_scores_]
+            current_fscore = f1_score(ground_truth_, binarized_results)
+            if current_fscore > max_f1:
+                max_f1 = current_fscore
+                max_f1_recall = recall_score(ground_truth_, binarized_results)
+                max_f1_precision = precision_score(ground_truth_, binarized_results)
+
         # Plot
-        ax.plot(fpr, tpr, linestyle='-', lw=3, color=model_color_, label=f'{model_name_} (EER={eer:.2f}, AUC={auc_result:.3f})')
+        ax.plot(fpr, tpr, linestyle='-', lw=3, color=model_color_, label=f'{model_name_} (EER={eer:.2f}, AUC={auc_result:.3f}, R={max_f1_recall:.3f}, P={max_f1_precision:.3f}, F={max_f1:.3f})')
         ax.scatter(eer, tpr[np.argmin(np.absolute(fnr - fpr))], color=model_color_, linewidths=8, zorder=10)
 
         # CSV

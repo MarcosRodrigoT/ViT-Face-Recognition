@@ -1,11 +1,12 @@
 import tensorflow as tf
 from vit_keras import vit
 from scipy.spatial.distance import cosine
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, recall_score, precision_score, f1_score
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 
 def preprocess(paths):
@@ -63,8 +64,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_vit = fpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]
     eer_vit_threshold = thresholds_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_vit, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in vit_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label=f'ViT_B32 (EER={eer_vit:.2f}, AUC={auc_vit:.3f})')
+    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label=f'ViT_B32 (EER={eer_vit:.2f}, AUC={auc_vit:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))], color='blue', linewidths=8, zorder=10)
 
     # CSV
@@ -80,8 +94,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_resnet = fpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]
     eer_resnet_threshold = thresholds_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_resnet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in resnet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label=f'ResNet_50 (EER={eer_resnet:.2f}, AUC={auc_resnet:.3f})')
+    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label=f'ResNet_50 (EER={eer_resnet:.2f}, AUC={auc_resnet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_resnet, tpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))], color='orange', linewidths=8, zorder=10)
 
     # CSV
@@ -97,8 +124,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_vgg = fpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]
     eer_vgg_threshold = thresholds_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_vgg, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in vgg_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label=f'VGG_16 (EER={eer_vgg:.2f}, AUC={auc_vgg:.3f})')
+    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label=f'VGG_16 (EER={eer_vgg:.2f}, AUC={auc_vgg:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))], color='green', linewidths=8, zorder=10)
 
     # CSV
@@ -114,8 +154,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_inception = fpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
     eer_inception_threshold = thresholds_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_inception, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in inception_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label=f'Inception_V3 (EER={eer_inception:.2f}, AUC={auc_inception:.3f})')
+    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label=f'Inception_V3 (EER={eer_inception:.2f}, AUC={auc_inception:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))], color='cyan', linewidths=8, zorder=10)
 
     # CSV
@@ -131,8 +184,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_mobilenet = fpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
     eer_mobilenet_threshold = thresholds_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_mobilenet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in mobilenet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label=f'MobileNet_V2 (EER={eer_mobilenet:.2f}, AUC={auc_mobilenet:.3f})')
+    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label=f'MobileNet_V2 (EER={eer_mobilenet:.2f}, AUC={auc_mobilenet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))], color='magenta', linewidths=8, zorder=10)
 
     # CSV
@@ -148,8 +214,21 @@ def compute_roc(results_dictionary, fig_name, positive_label=1):
     eer_efficientnet = fpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
     eer_efficientnet_threshold = thresholds_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
 
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_efficientnet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in efficientnet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
     # Plot
-    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label=f'EfficientNet_B0 (EER={eer_efficientnet:.2f}, AUC={auc_efficientnet:.3f})')
+    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label=f'EfficientNet_B0 (EER={eer_efficientnet:.2f}, AUC={auc_efficientnet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))], color='brown', linewidths=8, zorder=10)
 
     # CSV

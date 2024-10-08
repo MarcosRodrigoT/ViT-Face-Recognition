@@ -8,7 +8,8 @@ from vit_keras import vit
 from copy import deepcopy
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cosine
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, recall_score, precision_score, f1_score
+from tqdm import tqdm
 
 
 def get_label(file_path):
@@ -193,9 +194,9 @@ def create_all_pairs_no_mask(skip_distances):
         all_gallery = {}
         all_probe = {}
 
-        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_I_N.pickle', 'rb') as file:
+        with open('./saved_results/Tests/UPM-GTI-Face/No mask/embeddings_FC_I_N.pickle', 'rb') as file:
             gallery_dict_FC_indoor, probe_dict_FC_indoor = pickle.load(file)
-        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_O_N.pickle', 'rb') as file:
+        with open('./saved_results/Tests/UPM-GTI-Face/No mask/embeddings_FC_O_N.pickle', 'rb') as file:
             gallery_dict_FC_outdoor, probe_dict_FC_outdoor = pickle.load(file)
 
         for person in gallery_dict_FC_indoor.keys():
@@ -249,9 +250,9 @@ def create_all_pairs_mask(skip_distances):
         all_gallery = {}
         all_probe = {}
 
-        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_I_M.pickle', 'rb') as file:
+        with open('./saved_results/Tests/UPM-GTI-Face/Mask/embeddings_FC_I_M.pickle', 'rb') as file:
             gallery_dict_FC_indoor, probe_dict_FC_indoor = pickle.load(file)
-        with open('./saved_results/Tests/UPM-GTI-Face/embeddings_FC_O_M.pickle', 'rb') as file:
+        with open('./saved_results/Tests/UPM-GTI-Face/Mask/embeddings_FC_O_M.pickle', 'rb') as file:
             gallery_dict_FC_outdoor, probe_dict_FC_outdoor = pickle.load(file)
 
         for person in gallery_dict_FC_indoor.keys():
@@ -386,12 +387,26 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_vit = fpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]
     eer_vit_threshold = thresholds_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]
 
-    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label='ViT_B32 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vit), '{0:.2f}'.format(auc_vit)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_vit, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in vit_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_vit, tpr_vit, linestyle='-', lw=lw, color='blue', label=f'ViT_B32 (EER={eer_vit:.2f}, AUC={auc_vit:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))], color='blue', linewidths=8, zorder=10)
 
     vit_pd = pd.DataFrame({'FPR_ViT': fpr_vit, 'TPR_ViT': tpr_vit})
     vit_pd['EER_ViT'] = pd.DataFrame([eer_vit, tpr_vit[np.argmin(np.absolute(fnr_vit - fpr_vit))]])
-    vit_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/ViT_B32_ROC.csv', header=True, index=False)
+    # vit_pd.to_csv('./saved_results/Tests/UPM-GTI-Face/ViT_B32_ROC.csv', header=True, index=False)
 
     # ResNet
     fpr_resnet, tpr_resnet, thresholds_resnet = roc_curve(gt_results, resnet_results, pos_label=positive_label)
@@ -400,7 +415,21 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_resnet = fpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]
     eer_resnet_threshold = thresholds_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))]
 
-    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label='ResNet_50 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_resnet), '{0:.2f}'.format(auc_resnet)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_resnet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in resnet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_resnet, tpr_resnet, linestyle='-', lw=lw, color='orange', label=f'ResNet_50 (EER={eer_resnet:.2f}, AUC={auc_resnet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_resnet, tpr_resnet[np.argmin(np.absolute(fnr_resnet - fpr_resnet))], color='orange', linewidths=8, zorder=10)
 
     resnet_pd = pd.DataFrame({'FPR_RESNET': fpr_resnet, 'TPR_RESNET': tpr_resnet})
@@ -414,7 +443,21 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_vgg = fpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]
     eer_vgg_threshold = thresholds_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))]
 
-    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label='VGG_16 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_vgg), '{0:.2f}'.format(auc_vgg)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_vgg, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in vgg_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_vgg, tpr_vgg, linestyle='-', lw=lw, color='green', label=f'VGG_16 (EER={eer_vgg:.2f}, AUC={auc_vgg:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_vgg, tpr_vgg[np.argmin(np.absolute(fnr_vgg - fpr_vgg))], color='green', linewidths=8, zorder=10)
 
     vgg_pd = pd.DataFrame({'FPR_VGG': fpr_vgg, 'TPR_VGG': tpr_vgg})
@@ -428,7 +471,21 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_inception = fpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
     eer_inception_threshold = thresholds_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))]
 
-    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label='Inception_V3 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_inception), '{0:.2f}'.format(auc_inception)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_inception, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in inception_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_inception, tpr_inception, linestyle='-', lw=lw, color='cyan', label=f'Inception_V3 (EER={eer_inception:.2f}, AUC={auc_inception:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_inception, tpr_inception[np.argmin(np.absolute(fnr_inception - fpr_inception))], color='cyan', linewidths=8, zorder=10)
 
     inception_pd = pd.DataFrame({'FPR_INCEPTION': fpr_inception, 'TPR_INCEPTION': tpr_inception})
@@ -442,7 +499,21 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_mobilenet = fpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
     eer_mobilenet_threshold = thresholds_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))]
 
-    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label='MobileNet_V2 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_mobilenet), '{0:.2f}'.format(auc_mobilenet)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_mobilenet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in mobilenet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_mobilenet, tpr_mobilenet, linestyle='-', lw=lw, color='magenta', label=f'MobileNet_V2 (EER={eer_mobilenet:.2f}, AUC={auc_mobilenet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_mobilenet, tpr_mobilenet[np.argmin(np.absolute(fnr_mobilenet - fpr_mobilenet))], color='magenta', linewidths=8, zorder=10)
 
     mobilenet_pd = pd.DataFrame({'FPR_MOBILENET': fpr_mobilenet, 'TPR_MOBILENET': tpr_mobilenet})
@@ -456,7 +527,21 @@ def compute_roc(ds_dict, fig_name, positive_label=1):
     eer_efficientnet = fpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
     eer_efficientnet_threshold = thresholds_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))]
 
-    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label='EfficientNet_B0 (EER=%s, AUC=%s)' % ('{0:.2f}'.format(eer_efficientnet), '{0:.2f}'.format(auc_efficientnet)))
+    # Find the maximum F1 score and corresponding threshold
+    fscore = 0
+    recall = 0
+    precision = 0
+
+    for thresh in tqdm(thresholds_efficientnet, desc="Processing thresholds"):
+        binarized_results = [1 if score >= thresh else 0 for score in efficientnet_results]
+        current_fscore = f1_score(gt_results, binarized_results)
+        if current_fscore > fscore:
+            fscore = current_fscore
+            recall = recall_score(gt_results, binarized_results)
+            precision = precision_score(gt_results, binarized_results)
+
+    # Plot
+    ax.plot(fpr_efficientnet, tpr_efficientnet, linestyle='-', lw=lw, color='brown', label=f'EfficientNet_B0 (EER={eer_efficientnet:.2f}, AUC={auc_efficientnet:.3f}, R={recall:.3f}, P={precision:.3f}, F={fscore:.3f})')
     ax.scatter(eer_efficientnet, tpr_efficientnet[np.argmin(np.absolute(fnr_efficientnet - fpr_efficientnet))], color='brown', linewidths=8, zorder=10)
 
     efficientnet_pd = pd.DataFrame({'FPR_EFFICIENTNET': fpr_efficientnet, 'TPR_EFFICIENTNET': tpr_efficientnet})
@@ -890,7 +975,8 @@ all_pairs_FC = compute_scores_and_ground_truths(all_pairs_FC)
 COMPUTE ROC CURVES
 """
 
-results_FC = compute_roc(all_pairs_FC, fig_name='FC_ROC', positive_label=1)
+results_FC = compute_roc(all_pairs_FC, fig_name='No mask/ROC', positive_label=1)
+# results_FC = compute_roc(all_pairs_FC, fig_name='Mask/ROC', positive_label=1)
 
 
 """
